@@ -4,14 +4,16 @@
  * and open the template in the editor.
  */
 package edu.wpi.first.wpilibj.templates.subsystems;
-
+import edu.wpi.first.wpilibj.templates.RobotMap;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  *
  * @author michaelsilver
  */
-public class drivetrain extends Subsystem {
+public class Drivetrain extends PIDSubsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
