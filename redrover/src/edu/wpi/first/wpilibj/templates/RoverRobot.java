@@ -31,6 +31,7 @@ public class RoverRobot extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
+        RobotMap.init();
         // instantiate the command used for the autonomous period
         autonomousCommand = new ExampleCommand();
 

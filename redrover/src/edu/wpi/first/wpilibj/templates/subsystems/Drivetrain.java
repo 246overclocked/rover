@@ -18,6 +18,8 @@ public class Drivetrain extends PIDSubsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     
+
+    
     static final double kP = 1;
     static final double kI = 0;
     static final double kD = 0;
@@ -38,7 +40,7 @@ public class Drivetrain extends PIDSubsystem {
         return 0;
     }
 
-    protected void usePIDOutput(double d) {
+    protected void usePIDOutput(double output) {
         
     }
 }
