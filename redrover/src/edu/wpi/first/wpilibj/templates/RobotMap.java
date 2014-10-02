@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -49,23 +50,39 @@ public class RobotMap {
     
     public static void init() {
         frontLeftWheelEncoder = new Encoder(1, 2, false);
+        LiveWindow.addSensor("Drivetrain", "frontLeftWheelEncoder", frontLeftWheelEncoder);
         frontRightWheelEncoder = new Encoder(3, 4, false);
+        LiveWindow.addSensor("Drivetrain", "frontRightWheelEncoder", frontRightWheelEncoder);
         backLeftWheelEncoder = new Encoder(5, 6, false);
+        LiveWindow.addSensor("Drivetrain", "backLeftWheelEncoder", backLeftWheelEncoder);
         backRightWheelEncoder = new Encoder(7, 8, false);
+        LiveWindow.addSensor("Drivetrain", "backRightWheelEncoder", backRightWheelEncoder);
         
         frontLeftModulePot = new AnalogChannel(9);
+        LiveWindow.addSensor("Drivetrain", "frontLeftModulePot", frontLeftModulePot);
         frontRightModulePot = new AnalogChannel(10);
+        LiveWindow.addSensor("Drivetrain", "frontRightModulePot", frontRightModulePot);
         backLeftModulePot = new AnalogChannel(11);
+        LiveWindow.addSensor("Drivetrain", "backLeftModulePot", backLeftModulePot);
         backRightModulePot = new AnalogChannel(12);
+        LiveWindow.addSensor("Drivetrain", "backRightModulePot", backRightModulePot);
             
         frontLeftWheelMotor = new Victor(1);
+        LiveWindow.addActuator("Drivetrain", "frontLeftWheelMotor", (Victor) frontLeftWheelMotor);
         frontRightWheelMotor = new Victor(2);
+        LiveWindow.addActuator("Drivetrain", "frontRightWheelMotor", (Victor) frontRightWheelMotor);
         backLeftWheelMotor = new Victor(3);
+        LiveWindow.addActuator("Drivetrain", "backLeftWheelMotor", (Victor) backLeftWheelMotor);
         backRightWheelMotor = new Victor(4);
+        LiveWindow.addActuator("Drivetrain", "backRightWheelMotor", (Victor) backRightWheelMotor);
         
         frontLeftModuleMotor = new Victor(5);
+        LiveWindow.addActuator("Drivetrain", "frontLeftModuleMotor", (Victor) frontLeftModuleMotor);
         frontRightModuleMotor = new Victor(6);
+        LiveWindow.addActuator("Drivetrain", "frontRightModuleMotor", (Victor) frontRightModuleMotor);
         backLeftModuleMotor = new Victor(7);
+        LiveWindow.addActuator("Drivetrain", "backLeftModuleMotor", (Victor) backLeftModuleMotor);
         backRightModuleMotor = new Victor(8);
+        LiveWindow.addActuator("Drivetrain", "backRightModuleMotor", (Victor) backRightModuleMotor);
     }
 }
