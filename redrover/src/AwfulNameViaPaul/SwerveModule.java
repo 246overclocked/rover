@@ -72,4 +72,30 @@ public class SwerveModule
     public void setWheelSpeed(double speed){
         speedPID.setSetpoint(speed);
     }
+    
+    public void anglePIDOn(boolean on){
+        if (on) anglePID.enable();
+        else anglePID.disable();
+    }
+    
+    public void speedPIDOn(boolean on){
+        if (on) speedPID.enable();
+        else speedPID.disable();
+    }
+    
+    public double getAngleSetpoint() {
+        return anglePID.getSetpoint();
+    }
+    
+    public double getSpeedSetpoint() {
+        return speedPID.getSetpoint();
+    }
+    
+    public boolean angleOnTarget() {
+        return anglePID.onTarget();
+    }
+    
+    public boolean speedOnTarget() {
+        return speedPID.onTarget();
+    }
 }
