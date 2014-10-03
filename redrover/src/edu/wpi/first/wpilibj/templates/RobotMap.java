@@ -3,6 +3,7 @@ package edu.wpi.first.wpilibj.templates;
 import AwfulNameViaPaul.Potentiometer;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -50,21 +51,37 @@ public class RobotMap {
     
     public static void init() {
         frontLeftWheelEncoder = new Encoder(1, 2, false);
+        frontLeftWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
+        frontLeftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        frontLeftWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontLeftWheelEncoder", frontLeftWheelEncoder);
         frontRightWheelEncoder = new Encoder(3, 4, false);
+        frontRightWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
+        frontRightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        frontRightWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontRightWheelEncoder", frontRightWheelEncoder);
         backLeftWheelEncoder = new Encoder(5, 6, false);
-        LiveWindow.addSensor("Drivetrain", "backLeftWheelEncoder", backLeftWheelEncoder);
+        backLeftWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
+        backLeftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        backLeftWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "backLeftWheelEncoder", backLeftWheelEncoder); 
         backRightWheelEncoder = new Encoder(7, 8, false);
-        LiveWindow.addSensor("Drivetrain", "backRightWheelEncoder", backRightWheelEncoder);
+        backRightWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
+        backRightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        backRightWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "backRightWheelEncoder", backRightWheelEncoder); 
         
         frontLeftModulePot = new Potentiometer(9);
+        frontLeftModulePot.setConversions(1, 2.5); // TODO set degreesPerVolt when mechanical team knows gear ratio
         LiveWindow.addSensor("Drivetrain", "frontLeftModulePot", frontLeftModulePot);
         frontRightModulePot = new Potentiometer(10);
+        frontRightModulePot.setConversions(1, 2.5); // TODO set degreesPerVolt when mechanical team knows gear ratio
         LiveWindow.addSensor("Drivetrain", "frontRightModulePot", frontRightModulePot);
         backLeftModulePot = new Potentiometer(11);
+        backLeftModulePot.setConversions(1, 2.5); // TODO set degreesPerVolt when mechanical team knows gear ratio
         LiveWindow.addSensor("Drivetrain", "backLeftModulePot", backLeftModulePot);
         backRightModulePot = new Potentiometer(12);
+        backRightModulePot.setConversions(1, 2.5); // TODO set degreesPerVolt when mechanical team knows gear ratio
         LiveWindow.addSensor("Drivetrain", "backRightModulePot", backRightModulePot);
             
         frontLeftWheelMotor = new Victor(1);

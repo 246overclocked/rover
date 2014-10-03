@@ -52,8 +52,24 @@ public class SwerveModule
         
         speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, encoder, wheelMotor, SPEED_PERIOD);
         anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, modulePot, moduleMotor, ANGLE_PERIOD);
+        
         speedPID.setAbsoluteTolerance(SPEED_TOLERANCE);
         anglePID.setAbsoluteTolerance(ANGLE_TOLERANCE);
+        
         anglePID.setContinuous(true);
+        anglePID.setInputRange(0, 360);
+        
+        speedPID.setOutputRange(-1, 1);
+        anglePID.setOutputRange(-1, 1);
+    }
+    
+    // set angle
+    public void setAngle(double angle){
+        anglePID.setSetpoint(angle);
+    }
+    
+    // set wheel speed
+    public void setWheelSpeed(double speed){
+        speedPID.setSetpoint(speed);
     }
 }
