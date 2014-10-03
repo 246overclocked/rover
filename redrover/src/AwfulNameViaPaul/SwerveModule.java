@@ -20,7 +20,7 @@ public class SwerveModule
 
     public Encoder encoder;
 
-    public AnalogChannel modulePot;
+    public Potentiometer modulePot;
 
     public SpeedController wheelMotor;
 
@@ -43,7 +43,7 @@ public class SwerveModule
     public static final double ANGLE_PERIOD = 10;
     public static final double ANGLE_TOLERANCE = 0.5;
     
-    public SwerveModule(Encoder encoder, AnalogChannel modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
+    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
     {
         this.encoder = encoder;
         this.modulePot = modulePot;

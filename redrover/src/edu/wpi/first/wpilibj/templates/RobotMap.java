@@ -1,6 +1,6 @@
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.AnalogChannel;
+import AwfulNameViaPaul.Potentiometer;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -22,10 +22,10 @@ public class RobotMap {
     public static Encoder backLeftWheelEncoder;
     public static Encoder backRightWheelEncoder;
         // wheel angle direction 
-    public static AnalogChannel frontLeftModulePot;
-    public static AnalogChannel frontRightModulePot;
-    public static AnalogChannel backLeftModulePot;
-    public static AnalogChannel backRightModulePot;
+    public static Potentiometer frontLeftModulePot;
+    public static Potentiometer frontRightModulePot;
+    public static Potentiometer backLeftModulePot;
+    public static Potentiometer backRightModulePot;
     
     // motors
     public static SpeedController frontLeftWheelMotor;
@@ -58,13 +58,13 @@ public class RobotMap {
         backRightWheelEncoder = new Encoder(7, 8, false);
         LiveWindow.addSensor("Drivetrain", "backRightWheelEncoder", backRightWheelEncoder);
         
-        frontLeftModulePot = new AnalogChannel(9);
+        frontLeftModulePot = new Potentiometer(9);
         LiveWindow.addSensor("Drivetrain", "frontLeftModulePot", frontLeftModulePot);
-        frontRightModulePot = new AnalogChannel(10);
+        frontRightModulePot = new Potentiometer(10);
         LiveWindow.addSensor("Drivetrain", "frontRightModulePot", frontRightModulePot);
-        backLeftModulePot = new AnalogChannel(11);
+        backLeftModulePot = new Potentiometer(11);
         LiveWindow.addSensor("Drivetrain", "backLeftModulePot", backLeftModulePot);
-        backRightModulePot = new AnalogChannel(12);
+        backRightModulePot = new Potentiometer(12);
         LiveWindow.addSensor("Drivetrain", "backRightModulePot", backRightModulePot);
             
         frontLeftWheelMotor = new Victor(1);
