@@ -43,6 +43,8 @@ public class SwerveModule
     public static final double ANGLE_PERIOD = 10;
     public static final double ANGLE_TOLERANCE = 0.5;
     
+    public static final double MAX_ROTATIONS = 3;
+    
     public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
     {
         this.encoder = encoder;
@@ -63,6 +65,7 @@ public class SwerveModule
         anglePID.setOutputRange(-1, 1);
     }
     
+    // PID Methods
     // set angle
     public void setAngle(double angle){
         anglePID.setSetpoint(angle);
@@ -98,4 +101,34 @@ public class SwerveModule
     public boolean speedOnTarget() {
         return speedPID.onTarget();
     }
+    
+    // Encoder Methods
+    public double getWheelSpeed() {
+        return encoder.getRate();
+    }
+    
+    public double getWheelDistance() {
+        return encoder.getDistance();
+    }
+    
+    public void resetEncoder(){
+        encoder.reset();
+    }
+    
+    // Potentiometer Methods
+    public double getPotAverageAngle(){
+        return modulePot.getAverageAngle();
+    }
+    
+    public int getNumberOfRotations(){
+        return modulePot.getRotation();
+    }
+    
+//    public boolean safeToRotate(){
+//        return (modulePot.getRotation() < MAX_ROTATIONS || modulePot.getRotation() > -MAX_ROTATIONS);
+//    }
+//    
+//    public boolean approachingMaxRotations(){
+//        return (modulePot.getRotation() > MAX_ROTATIONS || modulePot.getRotation()  -MAX_ROTATIONS);
+//    }
 }
