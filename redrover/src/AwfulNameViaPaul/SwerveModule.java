@@ -43,7 +43,7 @@ public class SwerveModule
     public static final double ANGLE_PERIOD = 10;
     public static final double ANGLE_TOLERANCE = 0.5;
     
-    public static final double MAX_ROTATIONS = 3;
+    public static final double MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
     public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
     {
@@ -124,11 +124,23 @@ public class SwerveModule
         return modulePot.getRotation();
     }
     
-//    public boolean safeToRotate(){
-//        return (modulePot.getRotation() < MAX_ROTATIONS || modulePot.getRotation() > -MAX_ROTATIONS);
-//    }
-//    
-//    public boolean approachingMaxRotations(){
-//        return (modulePot.getRotation() > MAX_ROTATIONS || modulePot.getRotation()  -MAX_ROTATIONS);
-//    }
+//    As soon as the angle is greater than 0 degrees, numb of rotations will be either 1 or -1 (depending on direction). 
+//    So, + or - 3*360 degrees of rotation would yeild 4 or -4 (depending on direction). When we are at 
+//    + or - (MAX_ROTATIONS + 1), which equals + or - 4, we are no longer safe to rotate. As long as we are less 
+//    than that, we are safe to rotate.
+    public boolean safeToRotate(){
+        return (modulePot.getRotation() < MAX_ROTATIONS + 1 || modulePot.getRotation() > -MAX_ROTATIONS - 1);
+    }
+    
+//    When the number of rotations = 3 (counting in the way outlined in the above comment), we have less than 
+//    360 degrees of rotation before we are no longer safe to rotate (at which point, the number of rotations would be 4 by our count).
+//    Therefore, we want to be warned when we are approaxing the maximum number of rotations.
+    public boolean approachingMaxRotations(){
+        return (modulePot.getRotation() == MAX_ROTATIONS || modulePot.getRotation() == -MAX_ROTATIONS);
+    }
+//    Explanation of weird way of counting: When the angle is less than + or - 360 degrees, we want to know which direction
+//    we have started to rotate. Therfore, we need to call this either + or - 1 rotations. Zero would not be helpful because
+//    we would not be able to distinguish which direction we began to rotate. Up above when defining MAX_ROTATIONS we use the normal "human" way of thinking
+//    about the maximum number of rotations so it will be easy for any "average user" to change that value if necessary without thinking
+//    about our wierd counting system.
 }
