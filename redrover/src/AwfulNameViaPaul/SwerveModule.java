@@ -43,7 +43,7 @@ public class SwerveModule
     public static final double ANGLE_PERIOD = 10;
     public static final double ANGLE_TOLERANCE = 0.5;
     
-    public static final double MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
+    public static final int MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
     public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
     {
