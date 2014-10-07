@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Victor;
 
 /**
  *
@@ -52,6 +53,9 @@ public class SwerveModule
         this.wheelMotor = wheelMotor;
         this.moduleMotor = moduleMotor;
         
+        ((Victor) moduleMotor).setSafetyEnabled(true);
+        ((Victor) moduleMotor).setExpiration(.1);
+        
         speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, encoder, wheelMotor, SPEED_PERIOD);
         anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, modulePot, moduleMotor, ANGLE_PERIOD);
         
@@ -68,16 +72,16 @@ public class SwerveModule
     // PID Methods
     // set angle
     public void setAngle(double angle){
-        if(modulePot.getRotation() > MAX_ROTATIONS || modulePot.getRotation() < -MAX_ROTATIONS)
+        if(modulePot.getRotation() > MAX_ROTATIONS || modulePot.getRotation() < -MAX_ROTATIONS) //if we have gone past MAX_ROTATIONS. This should never happen because of the code below, but I included it as a fail-safe.
         {
             unwind();
         }
-        else if((modulePot.getRotation() == MAX_ROTATIONS && modulePot.getAngle() >= 180) || (modulePot.getRotation() == -MAX_ROTATIONS && modulePot.getAngle() <= 180))
+        else if((modulePot.getRotation() == MAX_ROTATIONS && modulePot.getAngle() >= 180) || (modulePot.getRotation() == -MAX_ROTATIONS && modulePot.getAngle() <= 180)) //if we are approaching MAX_ROTATIONS.
         {
             anglePIDOn(true);
             anglePID.setContinuous(false);
         }
-        else
+        else // if we are safe to rotate
         {
             anglePIDOn(true);
             anglePID.setContinuous();
@@ -90,14 +94,14 @@ public class SwerveModule
         speedPID.setSetpoint(speed);
     }
     
-    public void unwind()
+    public void unwind() //note that this method should be called repeatedly, not just once.
     {
-        if((modulePot.getRotation() == 1 && modulePot.getAngle() < 180) || (modulePot.getRotation() == -1 && modulePot.getAngle() > 180))
+        if((modulePot.getRotation() == 1 && modulePot.getAngle() < 180) || (modulePot.getRotation() == -1 && modulePot.getAngle() > 180)) //if we are within this range, than setting the setpoint to zero will bring it back to its starting position (0 degrees at 1 rotation)
         {
             anglePIDOn(true);
             anglePID.setSetpoint(0);
         }
-        else
+        else //if not, then we just have to turn off the PID loop and rotate the modules at full speed towards the starting position (0 degrees at 1 rotation) until we get into that range.
         {
             anglePIDOn(false);
             if(modulePot.getRotation() < 0)
