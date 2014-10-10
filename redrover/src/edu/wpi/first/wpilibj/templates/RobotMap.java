@@ -1,6 +1,6 @@
 package edu.wpi.first.wpilibj.templates;
 
-import AwfulNameViaPaul.Potentiometer;
+import Libraries.Potentiometer;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSource;

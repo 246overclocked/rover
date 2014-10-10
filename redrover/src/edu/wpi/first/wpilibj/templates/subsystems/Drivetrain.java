@@ -4,11 +4,13 @@
  * and open the template in the editor.
  */
 package edu.wpi.first.wpilibj.templates.subsystems;
-import AwfulNameViaPaul.SwerveModule;
+import Libraries.Vector2D;
+import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import java.util.Vector;
 
 
 /**
@@ -38,5 +40,25 @@ public class Drivetrain extends Subsystem {
         
     }
     
+//    CRABDRIVE METHODS:
     
+//    combines crab and swerve
+    public void crabWithTwist(){
+        
+    }
+//    turns all modules in the same direction
+    public Vector2D[] crab(double angle, double speed){
+        Vector2D[] moduleVectors = new Vector2D[4];
+        for(int i=0; i<moduleVectors.length; i++){
+            moduleVectors[i] = new Vector2D(false, speed, angle);
+        }
+        return moduleVectors;
+    }
+    
+//    turns modules tangential to arc
+//    where (x-origin, y-origin) is the location of the center of the circle
+//    we are turning about
+    public void snake(double x-origin, double y-origin){
+        
+    }
 }

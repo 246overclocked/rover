@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package AwfulNameViaPaul;
+package Libraries;
 
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.SensorBase;

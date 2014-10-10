@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package AwfulNameViaPaul;
+package Swerve;
 
+import Libraries.Potentiometer;
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
