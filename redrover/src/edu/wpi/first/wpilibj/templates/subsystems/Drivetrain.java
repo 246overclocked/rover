@@ -28,10 +28,10 @@ public class Drivetrain extends Subsystem {
     
     public Drivetrain()
     {
-        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor);
-        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModulePot, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor);
-        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModulePot, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor);
-        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModulePot, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor);
+        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, -RobotMap.LEFTRIGHTWIDTH/2, RobotMap.FRONTBACKLENGTH/2);
+        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModulePot, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.LEFTRIGHTWIDTH/2, RobotMap.FRONTBACKLENGTH/2);
+        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModulePot, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, -RobotMap.LEFTRIGHTWIDTH/2, -RobotMap.FRONTBACKLENGTH/2);
+        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModulePot, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.LEFTRIGHTWIDTH/2, -RobotMap.FRONTBACKLENGTH/2);
     }
 
     public void initDefaultCommand() {
@@ -58,7 +58,9 @@ public class Drivetrain extends Subsystem {
 //    turns modules tangential to arc
 //    where (x-origin, y-origin) is the location of the center of the circle
 //    we are turning about
-    public void snake(double x-origin, double y-origin){
+    public Vector2D[] snake(double rate, double originXDist, double orignYDist){
+        Vector2D[] moduleVectors = new Vector2D[4];
         
+        return moduleVectors;
     }
 }

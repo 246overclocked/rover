@@ -15,7 +15,17 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * floating around.
  */
 public class RobotMap {
-    // Drivetrain constructors  
+    
+//    Dimentions
+    //in a standard unit of measure -- we must be consistent throughout
+//    distance between "left" and "right" modules
+    public static final double LEFTRIGHTWIDTH = 12; // 12in = 1ft
+//    distance between "front" and "back" modules
+    public static final double FRONTBACKLENGTH = 12;
+//    it is assumed that the robot's center is located smack halfway between the
+//    "front" and "back" modules and the "left" and "right" modules
+    
+// Drivetrain constructors  
     // sensors
         // wheel speed 
     public static Encoder frontLeftWheelEncoder;

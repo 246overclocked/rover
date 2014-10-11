@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public class SwerveModule 
 {
-
+    double x;
+    double y;
+    
     public Encoder encoder;
 
     public Potentiometer modulePot;
@@ -47,8 +49,11 @@ public class SwerveModule
     
     public static final int MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
-    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor)
+    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor, double x, double y)
     {
+        this.x = x;
+        this.y = y;
+        
         this.encoder = encoder;
         this.modulePot = modulePot;
         this.wheelMotor = wheelMotor;
@@ -68,6 +73,15 @@ public class SwerveModule
         
         speedPID.setOutputRange(-1, 1);
         anglePID.setOutputRange(-1, 1);
+    }
+    
+//    coordinates
+    public double getX(){
+        return x;
+    }
+    
+    public double getY(){
+        return y;
     }
     
     // PID Methods
