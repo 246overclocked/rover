@@ -57,10 +57,26 @@ public class Drivetrain extends Subsystem {
     
 //    turns modules tangential to arc
 //    where (x-origin, y-origin) is the location of the center of the circle
-//    we are turning about
+//    we are turning about if we have a cartesian coordinate system with the
+//    robot's center as the origin
     public Vector2D[] snake(double rate, double originXDist, double orignYDist){
-        Vector2D[] moduleVectors = new Vector2D[4];
+        Vector2D origin = new Vector2D(true, originXDist, orignYDist);
+        Vector2D[] moduleLocations = new Vector2D[4];
+        moduleLocations[0] = new Vector2D(true, frontLeftModule.getX(), frontLeftModule.getY());
+        moduleLocations[1] = new Vector2D(true, frontRightModule.getX(), frontRightModule.getY());
+        moduleLocations[2] = new Vector2D(true, backLeftModule.getX(), backLeftModule.getY());
+        moduleLocations[3] = new Vector2D(true, backRightModule.getX(), backRightModule.getY());
         
-        return moduleVectors;
+//        makes the module locations relative to the origin of rotation
+        for(int i=0; i<moduleLocations.length; i++){
+            moduleLocations[i] = Vector2D.subtractVectors(moduleLocations[i], origin);
+        }
+        
+        Vector2D[] moduleSetpoints = new Vector2D[4];
+        for(int i=0; i<moduleSetpoints.length; i++){
+            moduleSetpoints[i] = new Vector2D(true, -moduleLocations[i].unitVector().getY(), moduleLocations[i].unitVector().getX());
+            moduleSetpoints[i].setMagnitude(rate); // don't know if positive rate will spin clock or counterclock -- TODO: need to experiment
+        }
+        return moduleSetpoints;
     }
 }
