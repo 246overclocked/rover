@@ -22,6 +22,8 @@ public class SwerveModule
     double x;
     double y;
     
+    double topAbsoluteWheelSpeed;
+    
     public Encoder encoder;
 
     public Potentiometer modulePot;
@@ -49,10 +51,12 @@ public class SwerveModule
     
     public static final int MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
-    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor, double x, double y)
+    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y)
     {
         this.x = x;
         this.y = y;
+        
+        this.topAbsoluteWheelSpeed = topAbsoluteWheelSpeed;
         
         this.encoder = encoder;
         this.modulePot = modulePot;
@@ -106,7 +110,7 @@ public class SwerveModule
     
     // set wheel speed
     public void setWheelSpeed(double speed){
-        speedPID.setSetpoint(speed);
+        speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
     }
     
     public void unwind() //note that this method should be called repeatedly, not just once.

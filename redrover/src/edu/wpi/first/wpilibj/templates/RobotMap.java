@@ -19,11 +19,12 @@ public class RobotMap {
 //    Dimentions
     //in a standard unit of measure -- we must be consistent throughout
 //    distance between "left" and "right" modules
-    public static final double LEFTRIGHTWIDTH = 12; // 12in = 1ft
+    public static final double LEFT_RIGHT_WIDTH = 12; // 12in = 1ft
 //    distance between "front" and "back" modules
-    public static final double FRONTBACKLENGTH = 12;
+    public static final double FRONT_BACK_LENGTH = 12;
 //    it is assumed that the robot's center is located smack halfway between the
 //    "front" and "back" modules and the "left" and "right" modules
+    public static final double WHEEL_TOP_ABSOLUTE_SPEED = 20;
     
 // Drivetrain constructors  
     // sensors

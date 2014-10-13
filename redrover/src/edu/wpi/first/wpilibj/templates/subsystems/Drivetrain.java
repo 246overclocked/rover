@@ -28,10 +28,10 @@ public class Drivetrain extends Subsystem {
     
     public Drivetrain()
     {
-        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, -RobotMap.LEFTRIGHTWIDTH/2, RobotMap.FRONTBACKLENGTH/2);
-        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModulePot, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.LEFTRIGHTWIDTH/2, RobotMap.FRONTBACKLENGTH/2);
-        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModulePot, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, -RobotMap.LEFTRIGHTWIDTH/2, -RobotMap.FRONTBACKLENGTH/2);
-        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModulePot, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.LEFTRIGHTWIDTH/2, -RobotMap.FRONTBACKLENGTH/2);
+        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
+        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModulePot, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
+        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModulePot, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
+        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModulePot, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
     }
 
     public void initDefaultCommand() {
@@ -42,10 +42,6 @@ public class Drivetrain extends Subsystem {
     
 //    CRABDRIVE METHODS:
     
-//    combines crab and swerve
-    public void crabWithTwist(){
-        
-    }
 //    turns all modules in the same direction
     public Vector2D[] crab(double angle, double speed){
         Vector2D[] moduleVectors = new Vector2D[4];
@@ -56,27 +52,56 @@ public class Drivetrain extends Subsystem {
     }
     
 //    turns modules tangential to arc
-//    where (x-origin, y-origin) is the location of the center of the circle
-//    we are turning about if we have a cartesian coordinate system with the
-//    robot's center as the origin
-    public Vector2D[] snake(double rate, double originXDist, double orignYDist){
-        Vector2D origin = new Vector2D(true, originXDist, orignYDist);
+//    where (x-cor, y-cor) is the location of the center of the circle
+//    we are turning about if we have a cartesian coordinate system with cor
+//    being the robot's center of rotation = "origin"
+    public Vector2D[] snake(double rate, double corXDist, double corYDist){
+        Vector2D cor = new Vector2D(true, corXDist, corYDist);
         Vector2D[] moduleLocations = new Vector2D[4];
         moduleLocations[0] = new Vector2D(true, frontLeftModule.getX(), frontLeftModule.getY());
         moduleLocations[1] = new Vector2D(true, frontRightModule.getX(), frontRightModule.getY());
         moduleLocations[2] = new Vector2D(true, backLeftModule.getX(), backLeftModule.getY());
         moduleLocations[3] = new Vector2D(true, backRightModule.getX(), backRightModule.getY());
         
-//        makes the module locations relative to the origin of rotation
+//        makes the module locations relative to the center of rotation
         for(int i=0; i<moduleLocations.length; i++){
-            moduleLocations[i] = Vector2D.subtractVectors(moduleLocations[i], origin);
+            moduleLocations[i] = Vector2D.subtractVectors(moduleLocations[i], cor);
         }
         
         Vector2D[] moduleSetpoints = new Vector2D[4];
         for(int i=0; i<moduleSetpoints.length; i++){
             moduleSetpoints[i] = new Vector2D(true, -moduleLocations[i].unitVector().getY(), moduleLocations[i].unitVector().getX());
-            moduleSetpoints[i].setMagnitude(rate); // don't know if positive rate will spin clock or counterclock -- TODO: need to experiment
+            moduleSetpoints[i].setMagnitude(rate); // don't know if positive rate will spin clock or counterclock -- TODO: need to experiment 
+            // TOOD: the modules will go at different speeds, not all the same speed FIX THIS!
         }
         return moduleSetpoints;
     }
+    
+    // direction will be continuously updated -- don't worry about changing it with gyro here
+    //everything in this method is robotcentric.
+    public void drive(double speed, double direction, double spinRate, double corX, double corY)
+    {
+        Vector2D[] moduleSetpoints = new Vector2D[4];
+        Vector2D[] crab = crab(direction, speed);
+        Vector2D[] snake = snake(spinRate, corX, corY);
+        
+        for(int i=0; i<moduleSetpoints.length; i++){
+            moduleSetpoints[i] = Vector2D.addVectors(crab[i], snake[i]); // this addition's magnitude can be greater than 1
+//            TODO: create a way to scale down the sum. Remember, two ways: Paul's (complete) and Michael's incomplete thought.
+        }
+        
+        
+        
+        frontLeftModule.setAngle(moduleSetpoints[0].getAngle());
+        frontRightModule.setAngle(moduleSetpoints[1].getAngle());
+        backLeftModule.setAngle(moduleSetpoints[2].getAngle());
+        backRightModule.setAngle(moduleSetpoints[3].getAngle());
+        
+        frontLeftModule.setWheelSpeed(moduleSetpoints[0].getMagnitude());
+        frontRightModule.setWheelSpeed(moduleSetpoints[1].getMagnitude());
+        backLeftModule.setWheelSpeed(moduleSetpoints[2].getMagnitude());
+        backRightModule.setWheelSpeed(moduleSetpoints[3].getMagnitude());        
+        
+    }
+    
 }
