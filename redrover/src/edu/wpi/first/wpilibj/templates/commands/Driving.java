@@ -15,7 +15,7 @@ public class Driving extends CommandBase {
     public Driving() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Drivetrain);
+        requires(drivetrain);
         
     }
 
