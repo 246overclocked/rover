@@ -64,15 +64,24 @@ public class Drivetrain extends Subsystem {
         moduleLocations[3] = new Vector2D(true, backRightModule.getX(), backRightModule.getY());
         
 //        makes the module locations relative to the center of rotation
+        double[] moduleDists = new double[4]; //array of module distances (the magnitudes of the distance vectors)
         for(int i=0; i<moduleLocations.length; i++){
             moduleLocations[i] = Vector2D.subtractVectors(moduleLocations[i], cor);
+            moduleDists[i] = moduleLocations[i].getMagnitude();
+        }
+        
+//        find the farthest module
+        int farthestModule = 0;
+        for(int i=0; i<moduleDists.length; i++){
+            if(moduleDists[i] > moduleDists[farthestModule]){
+                farthestModule = i;
+            }
         }
         
         Vector2D[] moduleSetpoints = new Vector2D[4];
         for(int i=0; i<moduleSetpoints.length; i++){
             moduleSetpoints[i] = new Vector2D(true, -moduleLocations[i].unitVector().getY(), moduleLocations[i].unitVector().getX());
-            moduleSetpoints[i].setMagnitude(rate); // don't know if positive rate will spin clock or counterclock -- TODO: need to experiment 
-            // TOOD: the modules will go at different speeds, not all the same speed FIX THIS!
+            moduleSetpoints[i].setMagnitude(rate*moduleDists[i]/moduleDists[farthestModule]); //set all modules' rate according to their distance from COR
         }
         return moduleSetpoints;
     }
