@@ -97,43 +97,23 @@ public class Potentiometer extends AnalogChannel
     }
     
     /**
-     * Get the value of the potentiometer converted to degrees between 0 and 360 relative to the zeroVoltage
-     * @return the angle in degrees 
+     * Get the value of the potentiometer converted to degrees relative to the zeroVoltage
+     * 
+     * @return the average angle in degrees 
     */
     public double getAngle()
     {
-        double angle = (getVoltage() - zeroVoltage) * degreesPerVolt;
-        angle = angle % 360;
-        if(angle < 0) angle = 360 + angle;
-        return angle;
+        return (getVoltage() - zeroVoltage) * degreesPerVolt;
     }
     
     /**
-     * Get the average value of the potentiometer converted to degrees between 0 and 360 relative to the zeroVoltage
+     * Get the averaged value of the potentiometer converted to degrees relative to the zeroVoltage
      * 
      * @return the average angle in degrees 
     */
     public double getAverageAngle()
     {
-        double angle = (getAverageVoltage() - zeroVoltage) * degreesPerVolt;
-        angle = angle % 360;
-        if(angle < 0) angle = 360 + angle;
-        return angle;
-    }
-    
-    /**
-     * Get the current number of full rotations past the zeroVoltage.
-     * A voltage slightly larger than or equal to the zeroVoltage will return 1.
-     * A voltage slightly smaller than the zeroVoltage will return -1.
-     * @return the number of full rotations from the zeroVoltage.
-     */
-    public int getRotation()
-    {
-        double angle = (getVoltage() - zeroVoltage) * degreesPerVolt;
-        int rotation = (int) angle/360;
-        if(angle < 0) rotation--;
-        else rotation++;
-        return rotation;
+        return (getAverageVoltage() - zeroVoltage) * degreesPerVolt;
     }
     
      /**
@@ -152,7 +132,6 @@ public class Potentiometer extends AnalogChannel
     {
         if (getTable() != null) {
             getTable().putNumber("Angle", getAverageVoltage());
-            getTable().putNumber("Rotation", getRotation());
         }
     }
     
