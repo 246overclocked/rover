@@ -51,6 +51,8 @@ public class SwerveModule
     
     public static final int MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
+    public boolean invertSpeed = false;
+    
     public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y)
     {
         this.x = x;
@@ -89,50 +91,33 @@ public class SwerveModule
     }
     
     // PID Methods
+    
+    //whenever possible, call setAngle before setSpeed;
+    
     // set angle
     public void setAngle(double angle){
-        if(modulePot.getRotation() > MAX_ROTATIONS || modulePot.getRotation() < -MAX_ROTATIONS) //if we have gone past MAX_ROTATIONS. This should never happen because of the code below, but I included it as a fail-safe.
+        double bestAngle = angle;
+        int startC = (int)((-720 + angle)/180);
+        for(int c = startC; c < startC + 8; c++)
         {
-            unwind();
+            if(Math.abs(angle + 180*c - modulePot.getAverageAngle()) > Math.abs(bestAngle - modulePot.getAverageAngle())) 
+            {    
+                bestAngle = angle + 180*c;
+            }
         }
-        else if((modulePot.getRotation() == MAX_ROTATIONS && modulePot.getAngle() >= 180) || (modulePot.getRotation() == -MAX_ROTATIONS && modulePot.getAngle() <= 180)) //if we are approaching MAX_ROTATIONS.
-        {
-            anglePIDOn(true);
-            anglePID.setContinuous(false);
-        }
-        else // if we are safe to rotate
-        {
-            anglePIDOn(true);
-            anglePID.setContinuous();
-        }
-        anglePID.setSetpoint(angle);
+        if(((bestAngle - angle)/360)%2 == 1) invertSpeed = true;
+        anglePID.setSetpoint(bestAngle);
     }
     
     // set wheel speed
     public void setWheelSpeed(double speed){
+        if(invertSpeed) speed = -speed;
         speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
     }
     
-    public void unwind() //note that this method should be called repeatedly, not just once.
+    public void unwind()
     {
-        if((modulePot.getRotation() == 1 && modulePot.getAngle() < 180) || (modulePot.getRotation() == -1 && modulePot.getAngle() > 180)) //if we are within this range, than setting the setpoint to zero will bring it back to its starting position (0 degrees at 1 rotation)
-        {
-            anglePIDOn(true);
-            anglePID.setSetpoint(0);
-        }
-        else //if not, then we just have to turn off the PID loop and rotate the modules at full speed towards the starting position (0 degrees at 1 rotation) until we get into that range.
-        {
-            anglePIDOn(false);
-            if(modulePot.getRotation() < 0)
-            {
-                moduleMotor.set(1);
-            }
-            else
-            {
-                moduleMotor.set(-1);
-            }
-        }
-        
+        anglePID.setSetpoint(0);
     }
     
     public void anglePIDOn(boolean on){
@@ -178,14 +163,4 @@ public class SwerveModule
     public double getPotAverageAngle(){
         return modulePot.getAverageAngle();
     }
-    
-    public int getNumberOfRotations(){
-        return modulePot.getRotation();
-    }
-    
-//    Explanation of weird way of counting: When the angle is less than + or - 360 degrees, we want to know which direction
-//    we have started to rotate. Therfore, we need to call this either + or - 1 rotations. Zero would not be helpful because
-//    we would not be able to distinguish which direction we began to rotate. Up above when defining MAX_ROTATIONS we use the normal "human" way of thinking
-//    about the maximum number of rotations so it will be easy for any "average user" to change that value if necessary without thinking
-//    about our wierd counting system.
 }
