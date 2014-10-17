@@ -26,6 +26,8 @@ public class Drivetrain extends Subsystem {
     SwerveModule backLeftModule;
     SwerveModule backRightModule;
     
+    public double FOV = 0; //the front of the vehicle in degrees. May be used in different ways by different control schemes.
+    
     public Drivetrain()
     {
         frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
@@ -113,4 +115,19 @@ public class Drivetrain extends Subsystem {
         
     }
     
+    public void setFOV(double fov)
+    {
+        FOV = fov;
+    }
+    
+    public double getFOV()
+    {
+        return FOV;
+    }
+    
+    public double getFieldCentricHeading() //returns the direction of the robot relative to the direction the driver is facing.
+    {
+        //TODO: Code this method.
+        return 0;
+    }
 }
