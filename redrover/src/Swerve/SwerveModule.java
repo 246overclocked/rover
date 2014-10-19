@@ -65,9 +65,6 @@ public class SwerveModule
         this.wheelMotor = wheelMotor;
         this.moduleMotor = moduleMotor;
         
-        ((Victor) moduleMotor).setSafetyEnabled(true);
-        ((Victor) moduleMotor).setExpiration(.1);
-        
         speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, encoder, wheelMotor, SPEED_PERIOD);
         anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, modulePot, moduleMotor, ANGLE_PERIOD);
         
