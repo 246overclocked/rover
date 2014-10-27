@@ -93,6 +93,12 @@ public class SwerveModule
     
     // set angle
     public void setAngle(double angle){
+        double setPointForward; // angle setpoint if we want the wheel to move forward
+        double setPointBackward; // ditto for backwards
+        
+        
+        
+        /*
         double bestAngle = angle;
         int startC = (int)((-720 + angle)/180);
         for(int c = startC; c < startC + 8; c++)
@@ -104,6 +110,7 @@ public class SwerveModule
         }
         if(((bestAngle - angle)/360)%2 == 1) invertSpeed = true;
         anglePID.setSetpoint(bestAngle);
+        */
     }
     
     // set wheel speed
