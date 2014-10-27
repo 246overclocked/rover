@@ -30,10 +30,10 @@ public class Drivetrain extends Subsystem {
     
     public Drivetrain()
     {
-        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModulePot, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
-        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModulePot, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
-        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModulePot, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
-        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModulePot, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
+        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModuleEncoder, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
+        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModuleEncoder, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
+        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModuleEncoder, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
+        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModuleEncoder, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
     }
 
     public void initDefaultCommand() {

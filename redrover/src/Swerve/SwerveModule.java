@@ -6,7 +6,6 @@
 
 package Swerve;
 
-import Libraries.Potentiometer;
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
@@ -24,9 +23,9 @@ public class SwerveModule
     
     double topAbsoluteWheelSpeed;
     
-    public Encoder encoder;
+    public Encoder wheelEncoder;
 
-    public Potentiometer modulePot;
+    public Encoder moduleEncoder;
 
     public SpeedController wheelMotor;
 
@@ -53,20 +52,20 @@ public class SwerveModule
     
     public boolean invertSpeed = false;
     
-    public SwerveModule(Encoder encoder, Potentiometer modulePot, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y)
+    public SwerveModule(Encoder wheelEncoder, Encoder moduleEncoder, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y)
     {
         this.x = x;
         this.y = y;
         
         this.topAbsoluteWheelSpeed = topAbsoluteWheelSpeed;
         
-        this.encoder = encoder;
-        this.modulePot = modulePot;
+        this.wheelEncoder = wheelEncoder;
+        this.moduleEncoder = moduleEncoder;
         this.wheelMotor = wheelMotor;
         this.moduleMotor = moduleMotor;
         
-        speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, encoder, wheelMotor, SPEED_PERIOD);
-        anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, modulePot, moduleMotor, ANGLE_PERIOD);
+        speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, wheelEncoder, wheelMotor, SPEED_PERIOD);
+        anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, moduleEncoder, moduleMotor, ANGLE_PERIOD);
         
         speedPID.setAbsoluteTolerance(SPEED_TOLERANCE);
         anglePID.setAbsoluteTolerance(ANGLE_TOLERANCE);
@@ -103,7 +102,7 @@ public class SwerveModule
         int startC = (int)((-720 + angle)/180);
         for(int c = startC; c < startC + 8; c++)
         {
-            if(Math.abs(angle + 180*c - modulePot.getAverageAngle()) > Math.abs(bestAngle - modulePot.getAverageAngle())) 
+            if(Math.abs(angle + 180*c - moduleEncoder.getAverageAngle()) > Math.abs(bestAngle - moduleEncoder.getAverageAngle())) 
             {    
                 bestAngle = angle + 180*c;
             }
@@ -150,21 +149,26 @@ public class SwerveModule
         return speedPID.onTarget();
     }
     
-    // Encoder Methods
+    // Wheel Encoder Methods
     public double getWheelSpeed() {
-        return encoder.getRate();
+        return wheelEncoder.getRate();
     }
     
     public double getWheelDistance() {
-        return encoder.getDistance();
+        return wheelEncoder.getDistance();
     }
     
-    public void resetEncoder(){
-        encoder.reset();
+    public void resetWheelEncoder(){
+        wheelEncoder.reset();
     }
     
-    // Potentiometer Methods
-    public double getPotAverageAngle(){
-        return modulePot.getAverageAngle();
+    // Module Encoder Methods
+    
+    public double getModuleAngle() {
+        return moduleEncoder.getDistance();
+    }
+    
+    public void resetModuleEncoder(){
+        wheelEncoder.reset();
     }
 }
