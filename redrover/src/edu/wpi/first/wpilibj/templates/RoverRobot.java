@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.templates.commands.CommandBase;
-import edu.wpi.first.wpilibj.templates.commands.ExampleCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,7 +32,7 @@ public class RoverRobot extends IterativeRobot {
     public void robotInit() {
         RobotMap.init();
         // instantiate the command used for the autonomous period
-        autonomousCommand = new ExampleCommand();
+        autonomousCommand = null;
 
         // Initialize all subsystems
         CommandBase.init();
@@ -41,7 +40,7 @@ public class RoverRobot extends IterativeRobot {
 
     public void autonomousInit() {
         // schedule the autonomous command (example)
-        autonomousCommand.start();
+//        autonomousCommand.start();
     }
 
     /**

@@ -5,6 +5,8 @@
  */
 package Libraries;
 
+import com.sun.squawk.util.MathUtils;
+
 /**
  *
  * @author michaelsilver
@@ -40,7 +42,7 @@ public class Vector2D {
     }
     
     public double getAngle(){
-        return Math.tan(y/x);
+        return MathUtils.atan2(y, x);
     }
     
     public double getMagnitude() {

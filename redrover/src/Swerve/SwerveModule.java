@@ -90,6 +90,9 @@ public class SwerveModule
     // set angle
     
     public void setAngle(double angle){
+        
+        angle = angle % 360;
+        
         double setPointForward = angle; // angle setpoint if we want the wheel to move forward
         double setPointBackward = angle + 180; // ditto for backwards
         
