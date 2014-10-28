@@ -7,7 +7,6 @@
 package Libraries;
 
 import edu.wpi.first.wpilibj.AnalogChannel;
-import edu.wpi.first.wpilibj.SensorBase;
 
 /**
  *
@@ -131,7 +130,7 @@ public class Potentiometer extends AnalogChannel
     public void updateTable() 
     {
         if (getTable() != null) {
-            getTable().putNumber("Angle", getAverageVoltage());
+            getTable().putNumber("Angle", getAverageAngle());
         }
     }
     

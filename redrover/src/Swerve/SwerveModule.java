@@ -6,11 +6,10 @@
 
 package Swerve;
 
-import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.templates.RobotMap;
 
 /**
  *
@@ -47,8 +46,6 @@ public class SwerveModule
     public static final double ANGLE_Kf = 0;
     public static final double ANGLE_PERIOD = 10;
     public static final double ANGLE_TOLERANCE = 0.5;
-    
-    public static final int MAX_ROTATIONS = 3; // That is, 3*360 degrees is the maximum the wires will allow the module to spin
     
     public boolean invertSpeed = false;
     
@@ -88,28 +85,53 @@ public class SwerveModule
     
     // PID Methods
     
-    //whenever possible, call setAngle before setSpeed;
+    //whenever possible, call setAngle before setSpeed
     
     // set angle
+    
     public void setAngle(double angle){
-        double setPointForward; // angle setpoint if we want the wheel to move forward
-        double setPointBackward; // ditto for backwards
+        double setPointForward = angle; // angle setpoint if we want the wheel to move forward
+        double setPointBackward = angle + 180; // ditto for backwards
         
-        
-        
-        /*
-        double bestAngle = angle;
-        int startC = (int)((-720 + angle)/180);
-        for(int c = startC; c < startC + 8; c++)
+        while(Math.abs(setPointForward - moduleEncoder.getDistance()) > 180 
+                && setPointForward < RobotMap.MAX_MODULE_ANGLE 
+                && setPointForward > -RobotMap.MAX_MODULE_ANGLE) // while setPointForward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
         {
-            if(Math.abs(angle + 180*c - moduleEncoder.getAverageAngle()) > Math.abs(bestAngle - moduleEncoder.getAverageAngle())) 
-            {    
-                bestAngle = angle + 180*c;
-            }
+            if(setPointForward - moduleEncoder.getDistance() > 0) setPointForward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
+            else setPointForward -= 360; //else subtract 360
         }
-        if(((bestAngle - angle)/360)%2 == 1) invertSpeed = true;
-        anglePID.setSetpoint(bestAngle);
-        */
+        
+        while(Math.abs(setPointBackward - moduleEncoder.getDistance()) > 180 
+                && setPointBackward < RobotMap.MAX_MODULE_ANGLE 
+                && setPointBackward > -RobotMap.MAX_MODULE_ANGLE) // while setPointBackward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
+        {
+            if(setPointBackward - moduleEncoder.getDistance() > 0) setPointBackward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
+            else setPointBackward -= 360; //else subtract 360
+        }
+        
+        //rate the 2 options based on distance from the current angle, if we will be untwisting the wire, and how fast the wheel is going for setPointBackward to reverse it
+        
+        double forwardsRating = 0;
+        double backwardsRating = 0;
+        
+        forwardsRating -= RobotMap.K_MODULE_ANGLE_DELTA*Math.abs(setPointForward - moduleEncoder.getDistance());
+        backwardsRating -= RobotMap.K_MODULE_ANGLE_DELTA*Math.abs(setPointBackward - moduleEncoder.getDistance());
+        
+        if((setPointForward > 0 && setPointForward < moduleEncoder.getDistance()) || (setPointForward < 0 && setPointForward > moduleEncoder.getDistance())) forwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE;
+        if((setPointBackward > 0 && setPointBackward < moduleEncoder.getDistance()) || (setPointBackward < 0 && setPointBackward > moduleEncoder.getDistance())) backwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE;
+        
+        backwardsRating -= RobotMap.K_MODULE_ANGLE_REVERSE * wheelEncoder.getRate();
+        
+        if(forwardsRating > backwardsRating) 
+        {
+            anglePID.setSetpoint(setPointForward);
+            invertSpeed = false;
+        }
+        else
+        {
+            anglePID.setSetpoint(setPointBackward);
+            invertSpeed = true;
+        }
     }
     
     // set wheel speed

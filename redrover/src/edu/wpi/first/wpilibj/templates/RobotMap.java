@@ -25,6 +25,13 @@ public class RobotMap {
 //    "front" and "back" modules and the "left" and "right" modules
     public static final double WHEEL_TOP_ABSOLUTE_SPEED = 20;
     
+    //the constants for optimizing which direction the swerveModules will turn
+    public static final double K_MODULE_ANGLE_DELTA = 1;
+    public static final double K_MODULE_ANGLE_TWIST = 0;
+    public static final double K_MODULE_ANGLE_REVERSE = 0;
+    
+    public static final double MAX_MODULE_ANGLE = 3*360;
+    
 // Drivetrain constructors  
     // sensors
         // wheel speed 
