@@ -7,10 +7,7 @@ package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.templates.RobotMap;
-import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import java.util.Vector;
 
 
 /**
@@ -96,12 +93,20 @@ public class Drivetrain extends Subsystem {
         Vector2D[] crab = crab(direction, speed);
         Vector2D[] snake = snake(spinRate, corX, corY);
         
+        double largestVector = 0;
         for(int i=0; i<moduleSetpoints.length; i++){
-            moduleSetpoints[i] = Vector2D.addVectors(crab[i], snake[i]); // this addition's magnitude can be greater than 1
-//            TODO: create a way to scale down the sum. Remember, two ways: Paul's (complete) and Michael's incomplete thought.
+            moduleSetpoints[i] = Vector2D.addVectors(crab[i], snake[i]);
+            if(moduleSetpoints[i].getMagnitude() > largestVector) largestVector = moduleSetpoints[i].getMagnitude();
         }
         
-        
+        if(largestVector > 1)
+        {
+            //normalize the vectors so that none of them have a magnitude greater than 1
+            for(int i = 0; i < moduleSetpoints.length; i++)
+            {
+                moduleSetpoints[i].setMagnitude(moduleSetpoints[i].getMagnitude() / largestVector);
+            }
+        }
         
         frontLeftModule.setAngle(moduleSetpoints[0].getAngle());
         frontRightModule.setAngle(moduleSetpoints[1].getAngle());
