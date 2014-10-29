@@ -18,10 +18,10 @@ public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     
-    SwerveModule frontLeftModule;
-    SwerveModule frontRightModule;
-    SwerveModule backLeftModule;
-    SwerveModule backRightModule;
+    public SwerveModule frontLeftModule;
+    public SwerveModule frontRightModule;
+    public SwerveModule backLeftModule;
+    public SwerveModule backRightModule;
     
     public double FOV = 0; //the front of the vehicle in degrees. May be used in different ways by different control schemes.
     

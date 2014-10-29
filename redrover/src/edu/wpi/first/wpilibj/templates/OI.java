@@ -11,36 +11,15 @@ import edu.wpi.first.wpilibj.buttons.DigitalIOButton;
  */
 public class OI {
     
-    public Joystick joystick2D;
-    public Joystick joystick3D;
+    public Joystick driverLeftJoystick;
+    public Joystick driverRightJoystick;
     public Joystick operatorJoystick;
     
     public OI()
     {
-        joystick2D = new Joystick(1);
-        joystick3D = new Joystick(2);
+        driverLeftJoystick = new Joystick(1);
+        driverRightJoystick = new Joystick(2);
         operatorJoystick = new Joystick(3);
-    }
-    
-    public double get2DX()
-    {
-        return joystick2D.getRawAxis(1);
-    }
-    public double get2DY()
-    {
-        return joystick2D.getRawAxis(2);
-    }
-    public double get3DX()
-    {
-        return joystick2D.getRawAxis(1);
-    }
-    public double get3DY()
-    {
-        return joystick2D.getRawAxis(2);
-    }
-    public double get3DTwist()
-    {
-        return joystick2D.getRawAxis(3);
     }
 }
 
