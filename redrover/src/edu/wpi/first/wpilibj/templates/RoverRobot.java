@@ -9,6 +9,7 @@ package edu.wpi.first.wpilibj.templates;
 
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -22,7 +23,7 @@ import edu.wpi.first.wpilibj.templates.commands.CommandBase;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class RoverRobot extends IterativeRobot {
+public class RoverRobot extends IterativeRobot implements Runnable {
 
     Command autonomousCommand;
     
@@ -39,10 +40,11 @@ public class RoverRobot extends IterativeRobot {
 
         // Initialize all subsystems
         CommandBase.init();
+        
+        (new Thread(new RoverRobot())).start();
     }
     
     public void disabledPeriodic() {
-        sendDiagnostics();
     }
 
     public void autonomousInit() {
@@ -55,7 +57,6 @@ public class RoverRobot extends IterativeRobot {
      */
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
-        sendDiagnostics();
     }
 
     public void teleopInit() {
@@ -71,7 +72,6 @@ public class RoverRobot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
-        sendDiagnostics();
     }
     
     /**
@@ -79,62 +79,71 @@ public class RoverRobot extends IterativeRobot {
      */
     public void testPeriodic() {
         LiveWindow.run();
-        sendDiagnostics();
     }
     
-    public void sendDiagnostics()
+    public void run()
     {
         OI oi = CommandBase.oi;
         diagnosticsTable = NetworkTable.getTable("Diagnostics");
-        
-        //robot state
-        if(isAutonomous()) diagnosticsTable.putString("Robot State", "Autonomous");
-        else if(isOperatorControl()) diagnosticsTable.putString("Robot State", "Teleoperated");
-        else if(isTest()) diagnosticsTable.putString("Robot State", "Test");
-        else diagnosticsTable.putString("Robot State", "Disabled");
-        
-        //motor outputs
-        diagnosticsTable.putNumber("frontLeftWheelMotor", RobotMap.frontLeftWheelMotor.get());
-        diagnosticsTable.putNumber("frontRightWheelMotor", RobotMap.frontRightWheelMotor.get());
-        diagnosticsTable.putNumber("backLeftWheelMotor", RobotMap.backLeftWheelMotor.get());
-        diagnosticsTable.putNumber("backRightWheelMotor", RobotMap.backRightWheelMotor.get());
-        diagnosticsTable.putNumber("frontLeftModuleMotor", RobotMap.frontLeftModuleMotor.get());
-        diagnosticsTable.putNumber("frontRightModuleMotor", RobotMap.frontRightModuleMotor.get());
-        diagnosticsTable.putNumber("backLeftModuleMotor", RobotMap.backLeftModuleMotor.get());
-        diagnosticsTable.putNumber("backRightModuleMotor", RobotMap.backRightModuleMotor.get());
-        
-        //sensor outputs
-        diagnosticsTable.putNumber("frontLeftWheelEncoder", RobotMap.frontLeftWheelEncoder.getRate());
-        diagnosticsTable.putNumber("frontRightWheelEncoder", RobotMap.frontRightWheelEncoder.getRate());
-        diagnosticsTable.putNumber("backLeftWheelEncoder", RobotMap.backLeftWheelEncoder.getRate());
-        diagnosticsTable.putNumber("backRightWheelEncoder", RobotMap.backRightWheelEncoder.getRate());
-        diagnosticsTable.putNumber("frontLeftModuleEncoder", RobotMap.frontLeftModuleEncoder.getDistance());
-        diagnosticsTable.putNumber("frontRightModuleEncoder", RobotMap.frontRightModuleEncoder.getDistance());
-        diagnosticsTable.putNumber("backLeftModuleEncoder", RobotMap.backLeftModuleEncoder.getDistance());
-        diagnosticsTable.putNumber("backRightModuleEncoder", RobotMap.backRightModuleEncoder.getDistance());
-    
-        //Joystick values
-        for(int i = 1; i <= 6; i++)
+        while(true)
         {
-            diagnosticsTable.putNumber("driverLeftJoystick Axis " + i, oi.driverLeftJoystick.getRawAxis(i));
-            diagnosticsTable.putNumber("driverRightJoystick Axis " + i, oi.driverRightJoystick.getRawAxis(i));
-            diagnosticsTable.putNumber("operatorJoystick Axis " + i, oi.operatorJoystick.getRawAxis(i));
+            while(diagnosticsTable.getBoolean("isLogged", false) || Timer.getFPGATimestamp() - RobotMap.DIAGNOSTICS_LOOP_PERIOD < diagnosticsTable.getNumber("time", Integer.MIN_VALUE));
+            
+            //time
+            diagnosticsTable.putNumber("time", Timer.getFPGATimestamp());
+
+            //robot state
+            if(isAutonomous()) diagnosticsTable.putString("Robot State", "Autonomous");
+            else if(isOperatorControl()) diagnosticsTable.putString("Robot State", "Teleoperated");
+            else if(isTest()) diagnosticsTable.putString("Robot State", "Test");
+            else diagnosticsTable.putString("Robot State", "Disabled");
+
+            //motor outputs
+            diagnosticsTable.putNumber("frontLeftWheelMotor", RobotMap.frontLeftWheelMotor.get());
+            diagnosticsTable.putNumber("frontRightWheelMotor", RobotMap.frontRightWheelMotor.get());
+            diagnosticsTable.putNumber("backLeftWheelMotor", RobotMap.backLeftWheelMotor.get());
+            diagnosticsTable.putNumber("backRightWheelMotor", RobotMap.backRightWheelMotor.get());
+            diagnosticsTable.putNumber("frontLeftModuleMotor", RobotMap.frontLeftModuleMotor.get());
+            diagnosticsTable.putNumber("frontRightModuleMotor", RobotMap.frontRightModuleMotor.get());
+            diagnosticsTable.putNumber("backLeftModuleMotor", RobotMap.backLeftModuleMotor.get());
+            diagnosticsTable.putNumber("backRightModuleMotor", RobotMap.backRightModuleMotor.get());
+
+            //sensor outputs
+            diagnosticsTable.putNumber("frontLeftWheelEncoder", RobotMap.frontLeftWheelEncoder.getRate());
+            diagnosticsTable.putNumber("frontRightWheelEncoder", RobotMap.frontRightWheelEncoder.getRate());
+            diagnosticsTable.putNumber("backLeftWheelEncoder", RobotMap.backLeftWheelEncoder.getRate());
+            diagnosticsTable.putNumber("backRightWheelEncoder", RobotMap.backRightWheelEncoder.getRate());
+            diagnosticsTable.putNumber("frontLeftModuleEncoder", RobotMap.frontLeftModuleEncoder.getDistance());
+            diagnosticsTable.putNumber("frontRightModuleEncoder", RobotMap.frontRightModuleEncoder.getDistance());
+            diagnosticsTable.putNumber("backLeftModuleEncoder", RobotMap.backLeftModuleEncoder.getDistance());
+            diagnosticsTable.putNumber("backRightModuleEncoder", RobotMap.backRightModuleEncoder.getDistance());
+
+            //Joystick values
+            for(int i = 1; i <= 6; i++)
+            {
+                diagnosticsTable.putNumber("driverLeftJoystick Axis " + i, oi.driverLeftJoystick.getRawAxis(i));
+                diagnosticsTable.putNumber("driverRightJoystick Axis " + i, oi.driverRightJoystick.getRawAxis(i));
+                diagnosticsTable.putNumber("operatorJoystick Axis " + i, oi.operatorJoystick.getRawAxis(i));
+            }
+            for(int i = 1; i <= 12; i++)
+            {
+                diagnosticsTable.putBoolean("driverLeftJoystick Button " + i, oi.driverLeftJoystick.getRawButton(i));
+                diagnosticsTable.putBoolean("driverRightJoystick Button " + i, oi.driverRightJoystick.getRawButton(i));
+                diagnosticsTable.putBoolean("operatorJoystick Button " + i, oi.operatorJoystick.getRawButton(i));
+            }
+
+            //PID Setpoints
+            diagnosticsTable.putNumber("frontLeftModule Speed Setpoint", CommandBase.drivetrain.frontLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber("frontLeftModule Angle Setpoint", CommandBase.drivetrain.frontLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber("frontRightModule Speed Setpoint", CommandBase.drivetrain.frontRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber("frontRightModule Angle Setpoint", CommandBase.drivetrain.frontRightModule.getAngleSetpoint());
+            diagnosticsTable.putNumber("backLeftModule Speed Setpoint", CommandBase.drivetrain.backLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber("backLeftModule Angle Setpoint", CommandBase.drivetrain.backLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber("backRightModule Speed Setpoint", CommandBase.drivetrain.backRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber("backRightModule Angle Setpoint", CommandBase.drivetrain.backRightModule.getAngleSetpoint());
+            
+            //data confirmation
+            diagnosticsTable.putBoolean("isLogged", false);
         }
-        for(int i = 1; i <= 12; i++)
-        {
-            diagnosticsTable.putBoolean("driverLeftJoystick Button " + i, oi.driverLeftJoystick.getRawButton(i));
-            diagnosticsTable.putBoolean("driverRightJoystick Button " + i, oi.driverRightJoystick.getRawButton(i));
-            diagnosticsTable.putBoolean("operatorJoystick Button " + i, oi.operatorJoystick.getRawButton(i));
-        }
-        
-        //PID Setpoints
-        diagnosticsTable.putNumber("frontLeftModule Speed Setpoint", CommandBase.drivetrain.frontLeftModule.getSpeedSetpoint());
-        diagnosticsTable.putNumber("frontLeftModule Angle Setpoint", CommandBase.drivetrain.frontLeftModule.getAngleSetpoint());
-        diagnosticsTable.putNumber("frontRightModule Speed Setpoint", CommandBase.drivetrain.frontRightModule.getSpeedSetpoint());
-        diagnosticsTable.putNumber("frontRightModule Angle Setpoint", CommandBase.drivetrain.frontRightModule.getAngleSetpoint());
-        diagnosticsTable.putNumber("backLeftModule Speed Setpoint", CommandBase.drivetrain.backLeftModule.getSpeedSetpoint());
-        diagnosticsTable.putNumber("backLeftModule Angle Setpoint", CommandBase.drivetrain.backLeftModule.getAngleSetpoint());
-        diagnosticsTable.putNumber("backRightModule Speed Setpoint", CommandBase.drivetrain.backRightModule.getSpeedSetpoint());
-        diagnosticsTable.putNumber("backRightModule Angle Setpoint", CommandBase.drivetrain.backRightModule.getAngleSetpoint());
     }
 }
