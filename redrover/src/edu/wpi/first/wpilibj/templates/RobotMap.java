@@ -32,7 +32,7 @@ public class RobotMap {
     
     public static final double MAX_MODULE_ANGLE = 3*360;
     
-    public static final int DIAGNOSTICS_LOOP_PERIOD = 20;
+    public static final double DIAGNOSTICS_LOOP_PERIOD = 0.02; //in seconds
     
 // Drivetrain constructors  
     // sensors

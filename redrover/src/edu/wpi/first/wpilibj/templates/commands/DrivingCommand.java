@@ -37,6 +37,6 @@ public abstract class DrivingCommand extends CommandBase {
     protected abstract Vector2D getCOR();
     
     // methods to modify execute with overwriting current code
-    protected abstract void preExecute();
-    protected abstract void postExecute();
+    protected void preExecute(){}
+    protected void postExecute(){}
 }

@@ -100,7 +100,7 @@ public class SwerveModule
                 && setPointForward < RobotMap.MAX_MODULE_ANGLE 
                 && setPointForward > -RobotMap.MAX_MODULE_ANGLE) // while setPointForward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
         {
-            if(setPointForward - moduleEncoder.getDistance() > 0) setPointForward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
+            if(setPointForward - moduleEncoder.getDistance() < 0) setPointForward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
             else setPointForward -= 360; //else subtract 360
         }
         
@@ -108,7 +108,7 @@ public class SwerveModule
                 && setPointBackward < RobotMap.MAX_MODULE_ANGLE 
                 && setPointBackward > -RobotMap.MAX_MODULE_ANGLE) // while setPointBackward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
         {
-            if(setPointBackward - moduleEncoder.getDistance() > 0) setPointBackward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
+            if(setPointBackward - moduleEncoder.getDistance() < 0) setPointBackward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
             else setPointBackward -= 360; //else subtract 360
         }
         
@@ -117,13 +117,16 @@ public class SwerveModule
         double forwardsRating = 0;
         double backwardsRating = 0;
         
+        //Rating for the distance between where the module is currently pointing and each of the setpoints
         forwardsRating -= RobotMap.K_MODULE_ANGLE_DELTA*Math.abs(setPointForward - moduleEncoder.getDistance());
         backwardsRating -= RobotMap.K_MODULE_ANGLE_DELTA*Math.abs(setPointBackward - moduleEncoder.getDistance());
         
-        if((setPointForward > 0 && setPointForward < moduleEncoder.getDistance()) || (setPointForward < 0 && setPointForward > moduleEncoder.getDistance())) forwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE;
-        if((setPointBackward > 0 && setPointBackward < moduleEncoder.getDistance()) || (setPointBackward < 0 && setPointBackward > moduleEncoder.getDistance())) backwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE;
+        //Rating boost if this setpoint is closer to the 0 (where the wire is completely untwisted) that the current module angle
+        if((setPointForward > 0 && setPointForward < moduleEncoder.getDistance()) || (setPointForward < 0 && setPointForward > moduleEncoder.getDistance())) forwardsRating += RobotMap.K_MODULE_ANGLE_TWIST;
+        if((setPointBackward > 0 && setPointBackward < moduleEncoder.getDistance()) || (setPointBackward < 0 && setPointBackward > moduleEncoder.getDistance())) backwardsRating += RobotMap.K_MODULE_ANGLE_TWIST;
         
-        backwardsRating -= RobotMap.K_MODULE_ANGLE_REVERSE * wheelEncoder.getRate();
+        //Rating for if the how much the velocity will need to change in order the make the wheel go further. Forwards rating gets a positive boost if wheel is already moving forwards, if the wheel is currently moving backwards it gets a deduction.
+        forwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE * wheelEncoder.getRate();
         
         if(forwardsRating > backwardsRating) 
         {
