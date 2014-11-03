@@ -7,6 +7,8 @@ package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -121,15 +123,30 @@ public class Drivetrain extends Subsystem {
         
     }
     
+    //Code for turning the robot to a certain angle relative to the field
+    
     public static final double ABSOLUTE_TWIST_kP = 1;
     public static final double ABSOLUTE_TWIST_kI = 0;
     public static final double ABSOLUTE_TWIST_kD = 0;
     public static final double ABSOLUTE_TWIST_kF = 0;
     public static final double ABSOLUTE_TWIST_PERIOD = 20;
+    public AbsoluteTwistPIDOutput absoluteTwistPIDOutput = new AbsoluteTwistPIDOutput();
     
-    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, /* TODO: Set source */ null, null, ABSOLUTE_TWIST_PERIOD);
+    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, /* TODO: Set source */ null, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
+    
+    public class AbsoluteTwistPIDOutput implements PIDOutput
+    {
+        public double speed = 0;
+        public double direction = 0;
+
+        public void pidWrite(double output) {
+            drive(speed, direction, output, 0, 0);
+        } 
+    }
     
     public void driveAbsoluteTwist(double speed, double direction, double absoluteAngle){
+        absoluteTwistPIDOutput.speed = speed;
+        absoluteTwistPIDOutput.direction = direction;
         absoluteTwistPID.setSetpoint(absoluteAngle);
     }
     
@@ -137,6 +154,7 @@ public class Drivetrain extends Subsystem {
         if(on) absoluteTwistPID.enable();
         else absoluteTwistPID.disable();
     }
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- congratulations you did it, your prize is the smiley face just to the right----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:( hahaha
     
     public void setFOV(double fov)
     {

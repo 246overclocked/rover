@@ -41,7 +41,7 @@ public class CrabWithTwist extends DrivingCommand{
     }
 
     protected void interrupted() {
-        
+        end();
     }
     
 }
