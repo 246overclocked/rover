@@ -122,8 +122,17 @@ public class SwerveModule
         backwardsRating -= RobotMap.K_MODULE_ANGLE_DELTA*Math.abs(setPointBackward - moduleEncoder.getDistance());
         
         //Rating boost if this setpoint is closer to the 0 (where the wire is completely untwisted) that the current module angle
-        if((setPointForward > 0 && setPointForward < moduleEncoder.getDistance()) || (setPointForward < 0 && setPointForward > moduleEncoder.getDistance())) forwardsRating += RobotMap.K_MODULE_ANGLE_TWIST;
-        if((setPointBackward > 0 && setPointBackward < moduleEncoder.getDistance()) || (setPointBackward < 0 && setPointBackward > moduleEncoder.getDistance())) backwardsRating += RobotMap.K_MODULE_ANGLE_TWIST;
+        if(setPointForward > 0){
+            forwardsRating += (moduleEncoder.getDistance() - setPointForward)*RobotMap.K_MODULE_ANGLE_TWIST; // positive => we are unwinding (moving closer to zero)
+        } else {
+            forwardsRating += (setPointForward - moduleEncoder.getDistance())*RobotMap.K_MODULE_ANGLE_TWIST; // negative => we are winding up (moving farther from zero)
+        }
+
+        if(setPointBackward > 0){
+            backwardsRating += (moduleEncoder.getDistance() - setPointBackward)*RobotMap.K_MODULE_ANGLE_TWIST; // positive => we are unwinding (moving closer to zero)
+        } else {
+            backwardsRating += (setPointBackward - moduleEncoder.getDistance())*RobotMap.K_MODULE_ANGLE_TWIST; // negative => we are winding up (moving farther from zero)
+        }
         
         //Rating for if the how much the velocity will need to change in order the make the wheel go further. Forwards rating gets a positive boost if wheel is already moving forwards, if the wheel is currently moving backwards it gets a deduction.
         forwardsRating += RobotMap.K_MODULE_ANGLE_REVERSE * wheelEncoder.getRate();
