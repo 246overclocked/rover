@@ -6,6 +6,7 @@
 package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
 import Swerve.SwerveModule;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -118,6 +119,23 @@ public class Drivetrain extends Subsystem {
         backLeftModule.setWheelSpeed(moduleSetpoints[2].getMagnitude());
         backRightModule.setWheelSpeed(moduleSetpoints[3].getMagnitude());        
         
+    }
+    
+    public static final double ABSOLUTE_TWIST_kP = 1;
+    public static final double ABSOLUTE_TWIST_kI = 0;
+    public static final double ABSOLUTE_TWIST_kD = 0;
+    public static final double ABSOLUTE_TWIST_kF = 0;
+    public static final double ABSOLUTE_TWIST_PERIOD = 20;
+    
+    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, /* TODO: Set source */ null, null, ABSOLUTE_TWIST_PERIOD);
+    
+    public void driveAbsoluteTwist(double speed, double direction, double absoluteAngle){
+        absoluteTwistPID.setSetpoint(absoluteAngle);
+    }
+    
+    public void enableAbsoluteTwist(boolean on) {
+        if(on) absoluteTwistPID.enable();
+        else absoluteTwistPID.disable();
     }
     
     public void setFOV(double fov)
