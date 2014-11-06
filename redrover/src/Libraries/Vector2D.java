@@ -21,13 +21,14 @@ public class Vector2D {
             x = abscissa;
             y = ordinate;
         } else {
-            double[] coords = polarToCart(abscissa, ordinate + 90);
+            double[] coords = polarToCart(abscissa, ordinate);
             x = coords[0];
             y = coords[1];
         }
     }
     
     public static double[] polarToCart(double r, double theta){
+        theta = theta - 90;
         double[] cartCoords = {r*Math.cos(theta), r*Math.sin(theta)};
         return cartCoords;
     }
@@ -60,7 +61,7 @@ public class Vector2D {
     
     public void setAngle(double angle)
     {
-        double[] newCoords = Vector2D.polarToCart(getMagnitude(), angle + 90);
+        double[] newCoords = Vector2D.polarToCart(getMagnitude(), angle);
         x = newCoords[0];
         y = newCoords[1];
     }

@@ -134,14 +134,18 @@ public class Drivetrain extends Subsystem {
     
     PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, /* TODO: Set source */ null, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
     
+    /**
+     *@author Paul Terrasi
+     */
     public class AbsoluteTwistPIDOutput implements PIDOutput
     {
         public double speed = 0;
         public double direction = 0;
-
+        
         public void pidWrite(double output) {
             drive(speed, direction, output, 0, 0);
-        } 
+        }
+
     }
     
     public void driveAbsoluteTwist(double speed, double direction, double absoluteAngle){
