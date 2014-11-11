@@ -191,4 +191,13 @@ public class Drivetrain extends Subsystem {
         backLeftModule.unwind();
         backRightModule.unwind();
     }
+    
+    public void zeroAngles()
+    {
+        frontLeftModule.resetModuleEncoder();
+        frontRightModule.resetModuleEncoder();
+        backLeftModule.resetModuleEncoder();
+        backRightModule.resetModuleEncoder();
+    }
+            
 }

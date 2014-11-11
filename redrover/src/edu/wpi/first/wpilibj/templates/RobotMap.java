@@ -1,6 +1,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -58,6 +59,8 @@ public class RobotMap {
     public static SpeedController frontRightModuleMotor;
     public static SpeedController backLeftModuleMotor;
     public static SpeedController backRightModuleMotor;
+    
+    public static DigitalInput angleZeroingButton;
     // For example to map the left and right motors, you could define the
     // following variables to use with your drivetrain subsystem.
     // public static final int leftMotor = 1;
@@ -100,12 +103,12 @@ public class RobotMap {
         frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         frontLeftModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontRightModuleEncoder", frontRightModuleEncoder);
-        backLeftModuleEncoder = new Encoder(1, 3, 1, 4, false);
+        backLeftModuleEncoder = new Encoder(2, 3, 2, 4, false);
         frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
         frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         frontLeftModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "backLeftModuleEncoder", backLeftModuleEncoder);
-        backRightModuleEncoder = new Encoder(1, 5, 1, 6, false);
+        backRightModuleEncoder = new Encoder(2, 5, 2, 6, false);
         frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
         frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         frontLeftModuleEncoder.start();
@@ -128,5 +131,8 @@ public class RobotMap {
         LiveWindow.addActuator("Drivetrain", "backLeftModuleMotor", (Victor) backLeftModuleMotor);
         backRightModuleMotor = new Victor(8);
         LiveWindow.addActuator("Drivetrain", "backRightModuleMotor", (Victor) backRightModuleMotor);
+        
+        angleZeroingButton = new DigitalInput(1);
+        LiveWindow.addSensor("Drivetrain", "encoderZeroingSwitch", angleZeroingButton);
     }
 }

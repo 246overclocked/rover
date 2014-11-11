@@ -45,6 +45,10 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     }
     
     public void disabledPeriodic() {
+        if(RobotMap.angleZeroingButton.get())
+        {
+            CommandBase.drivetrain.zeroAngles();
+        }
     }
 
     public void autonomousInit() {
