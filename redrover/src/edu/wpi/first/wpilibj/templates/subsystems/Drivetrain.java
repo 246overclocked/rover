@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 
 /**
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
+    
+    NetworkTable LiDARTable;
     
     public SwerveModule frontLeftModule;
     public SwerveModule frontRightModule;
@@ -34,6 +37,8 @@ public class Drivetrain extends Subsystem {
         frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModuleEncoder, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
         backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModuleEncoder, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
         backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModuleEncoder, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
+    
+        LiDARTable = NetworkTable.getTable("LiDAR");
     }
 
     public void initDefaultCommand() {
@@ -172,8 +177,7 @@ public class Drivetrain extends Subsystem {
     
     public double getFieldCentricHeading() //returns the direction of the robot relative to the direction the driver is facing.
     {
-        //TODO: Code this method.
-        return 0;
+        return LiDARTable.getNumber("x", -1);
     }
     
     public boolean isMoving()

@@ -2,8 +2,6 @@ package Libraries;
 
 import com.sun.squawk.util.MathUtils;
 
-
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

@@ -11,7 +11,7 @@ import Libraries.Vector2D;
  *
  * @author michaelsilver
  */
-public class CrabWithTwist extends DrivingCommand{
+public class CrabWithTwist extends FieldCentricDrivingCommand{
 
 //    driverLeftJoystick is controlling "twist"
 //    driverRightJoystick is controlling "crab"

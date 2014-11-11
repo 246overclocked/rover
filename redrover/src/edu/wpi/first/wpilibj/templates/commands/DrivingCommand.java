@@ -21,6 +21,8 @@ public abstract class DrivingCommand extends CommandBase {
     protected void execute() {
         preExecute();
         
+        drivetrain.setFOV(updateHeading());
+        
         Vector2D crabVector = getCrabVector();
         crabVector.setAngle(crabVector.getAngle() + drivetrain.getFOV());
         Vector2D COR = getCOR();
@@ -38,5 +40,6 @@ public abstract class DrivingCommand extends CommandBase {
     
     // methods to modify execute with overwriting current code
     protected void preExecute(){}
+    protected abstract double updateHeading();
     protected void postExecute(){}
 }
