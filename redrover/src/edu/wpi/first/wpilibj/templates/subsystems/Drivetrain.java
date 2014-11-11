@@ -175,4 +175,20 @@ public class Drivetrain extends Subsystem {
         //TODO: Code this method.
         return 0;
     }
+    
+    public boolean isMoving()
+    {
+        return frontLeftModule.getSpeedSetpoint() != 0
+                ||frontRightModule.getSpeedSetpoint() != 0
+                ||backLeftModule.getSpeedSetpoint() != 0
+                ||backRightModule.getSpeedSetpoint() != 0;
+    }
+    
+    public void unwind()
+    {
+        frontLeftModule.unwind();
+        frontRightModule.unwind();
+        backLeftModule.unwind();
+        backRightModule.unwind();
+    }
 }
