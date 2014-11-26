@@ -7,8 +7,6 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-
-import com.google.gson.Gson;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -88,7 +86,6 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public void run()
     {
-        Gson gson = new Gson();
         /*
         String[] keys = {
             "time",
