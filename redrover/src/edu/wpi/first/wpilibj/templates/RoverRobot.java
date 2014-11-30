@@ -7,12 +7,14 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.commands.CommandBase;
 
 /**
@@ -26,7 +28,11 @@ public class RoverRobot extends IterativeRobot implements Runnable {
 
     Command autonomousCommand;
     
-    NetworkTable diagnosticsTable;
+    public static double startingHeading = 0;
+    
+    boolean test1 = true;
+    
+    //NetworkTable diagnosticsTable;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -40,8 +46,20 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         // Initialize all subsystems
         CommandBase.init();
         
-        (new Thread(new RoverRobot())).start();
-    }
+        //(new Thread(new RoverRobot())).start();
+        
+        if(test1)
+        {
+            SmartDashboard.putNumber("speedSetpoint", 0);
+            SmartDashboard.putNumber("angleSetpoint", 0);
+            SmartDashboard.putBoolean("speedOn", true);
+            SmartDashboard.putBoolean("angleOn", true);
+            SmartDashboard.putBoolean("unwind", false);
+            
+            SmartDashboard.putNumber("speed", 0);
+            SmartDashboard.putNumber("angle", 0);
+        }
+    }   
     
     public void disabledPeriodic() {
         if(RobotMap.angleZeroingButton.get())
@@ -74,13 +92,49 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        Scheduler.getInstance().run();
+        if(test1)
+        {
+            SwerveModule mod = CommandBase.drivetrain.leftModule;
+            
+            if(SmartDashboard.getBoolean("unwind", false))
+            {
+               mod.unwind();
+            }
+            else
+            {
+                if(SmartDashboard.getBoolean("speedOn", false))
+                {
+                    mod.setWheelSpeed(SmartDashboard.getNumber("speedSetpoint", 0));
+                }
+                else
+                {
+                    mod.speedPIDOn(false);
+                }
+
+                if(SmartDashboard.getBoolean("angleOn", false))
+                {
+                    mod.setAngle(SmartDashboard.getNumber("angleSetpoint", 0));
+                }
+                else
+                {
+                    mod.anglePIDOn(false);
+                }
+            }
+            
+            SmartDashboard.putNumber("speed", mod.getWheelSpeed());
+            SmartDashboard.putNumber("angle", mod.getModuleAngle());
+        }
+        else
+        {
+            Scheduler.getInstance().run();
+        }
     }
     
     /**
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
+        System.out.println(CommandBase.drivetrain.leftModule.anglePID.getError());
         LiveWindow.run();
     }
     

@@ -24,41 +24,44 @@ public class RobotMap {
     public static final double FRONT_BACK_LENGTH = 12;
 //    it is assumed that the robot's center is located smack halfway between the
 //    "front" and "back" modules and the "left" and "right" modules
-    public static final double WHEEL_TOP_ABSOLUTE_SPEED = 20;
+    public static final double WHEEL_TOP_ABSOLUTE_SPEED = 11;
     
     //the constants for optimizing which direction the swerveModules will turn
     public static final double K_MODULE_ANGLE_DELTA = 1;
     public static final double K_MODULE_ANGLE_TWIST = 0;
     public static final double K_MODULE_ANGLE_REVERSE = 0;
     
-    public static final double MAX_MODULE_ANGLE = 3*360;
+    public static final double MAX_MODULE_ANGLE = 2*360;
     
     public static final double DIAGNOSTICS_LOOP_PERIOD = 0.02; //in seconds
+    
+    public static final double WHEEL_ENCODER_DISTANCE_PER_TICK = .00628;
+    public static final double MODULE_ENCODER_DISTANCE_PER_TICK = .603;
     
 // Drivetrain constructors  
     // sensors
         // wheel speed 
-    public static Encoder frontLeftWheelEncoder;
-    public static Encoder frontRightWheelEncoder;
-    public static Encoder backLeftWheelEncoder;
-    public static Encoder backRightWheelEncoder;
+    public static Encoder frontWheelEncoder;
+    public static Encoder leftWheelEncoder;
+    public static Encoder backWheelEncoder;
+    public static Encoder rightWheelEncoder;
         // wheel angle direction 
-    public static Encoder frontLeftModuleEncoder;
-    public static Encoder frontRightModuleEncoder;
-    public static Encoder backLeftModuleEncoder;
-    public static Encoder backRightModuleEncoder;
+    public static Encoder frontModuleEncoder;
+    public static Encoder leftModuleEncoder;
+    public static Encoder backModuleEncoder;
+    public static Encoder rightModuleEncoder;
     
     // motors
-    public static SpeedController frontLeftWheelMotor;
-    public static SpeedController frontRightWheelMotor;
-    public static SpeedController backLeftWheelMotor;
-    public static SpeedController backRightWheelMotor;
+    public static SpeedController frontWheelMotor;
+    public static SpeedController leftWheelMotor;
+    public static SpeedController backWheelMotor;
+    public static SpeedController rightWheelMotor;
     
 //    by "module" we mean angle control of the wheel
-    public static SpeedController frontLeftModuleMotor;
-    public static SpeedController frontRightModuleMotor;
-    public static SpeedController backLeftModuleMotor;
-    public static SpeedController backRightModuleMotor;
+    public static SpeedController frontModuleMotor;
+    public static SpeedController leftModuleMotor;
+    public static SpeedController backModuleMotor;
+    public static SpeedController rightModuleMotor;
     
     public static DigitalInput angleZeroingButton;
     // For example to map the left and right motors, you could define the
@@ -72,67 +75,68 @@ public class RobotMap {
     // public static final int rangefinderModule = 1;
     
     public static void init() {
-        frontLeftWheelEncoder = new Encoder(1, 1, 1, 2, false);
-        frontLeftWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontLeftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
-        frontLeftWheelEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "frontLeftWheelEncoder", frontLeftWheelEncoder);
-        frontRightWheelEncoder = new Encoder(1, 3, 1, 4, false);
-        frontRightWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontRightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
-        frontRightWheelEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "frontRightWheelEncoder", frontRightWheelEncoder);
-        backLeftWheelEncoder = new Encoder(1, 5, 1, 6, false);
-        backLeftWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        backLeftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
-        backLeftWheelEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "backLeftWheelEncoder", backLeftWheelEncoder); 
-        backRightWheelEncoder = new Encoder(1, 7, 1, 8, false);
-        backRightWheelEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        backRightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
-        backRightWheelEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "backRightWheelEncoder", backRightWheelEncoder); 
+                
+        frontWheelEncoder = new Encoder(1, 1, 1, 2, false, CounterBase.EncodingType.k2X);
+        frontWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        frontWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        frontWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "frontWheelEncoder", frontWheelEncoder);
+        leftWheelEncoder = new Encoder(1, 3, 1, 4, false, CounterBase.EncodingType.k2X);
+        leftWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        leftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        leftWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "leftWheelEncoder", leftWheelEncoder);
+        backWheelEncoder = new Encoder(1, 5, 1, 6, false, CounterBase.EncodingType.k2X);
+        backWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        backWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        backWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "backWheelEncoder", backWheelEncoder); 
+        rightWheelEncoder = new Encoder(1, 7, 1, 8, false, CounterBase.EncodingType.k2X);
+        rightWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        rightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
+        rightWheelEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "rightWheelEncoder", rightWheelEncoder); 
         
-        frontLeftModuleEncoder = new Encoder(1, 9, 1, 10, false);
-        frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
-        frontLeftModuleEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "frontLeftModuleEncoder", frontLeftModuleEncoder);
-        frontRightModuleEncoder = new Encoder(2, 1, 2, 2, false);
-        frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
-        frontLeftModuleEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "frontRightModuleEncoder", frontRightModuleEncoder);
-        backLeftModuleEncoder = new Encoder(2, 3, 2, 4, false);
-        frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
-        frontLeftModuleEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "backLeftModuleEncoder", backLeftModuleEncoder);
-        backRightModuleEncoder = new Encoder(2, 5, 2, 6, false);
-        frontLeftModuleEncoder.setDistancePerPulse(1); //TODO: set the distance travelled per pulse -- ned to test
-        frontLeftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
-        frontLeftModuleEncoder.start();
-        LiveWindow.addSensor("Drivetrain", "backRightModuleEncoder", backRightModuleEncoder);
+        frontModuleEncoder = new Encoder(2, 1, 2, 2, false, CounterBase.EncodingType.k2X);
+        frontModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        frontModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
+        frontModuleEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "frontModuleEncoder", frontModuleEncoder);
+        leftModuleEncoder = new Encoder(2, 3, 2, 4, false, CounterBase.EncodingType.k2X);
+        leftModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        leftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
+        leftModuleEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "leftModuleEncoder", leftModuleEncoder);
+        backModuleEncoder = new Encoder(2, 5, 2, 6, false, CounterBase.EncodingType.k2X);
+        backModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        backModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
+        backModuleEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "backModuleEncoder", backModuleEncoder);
+        rightModuleEncoder = new Encoder(2, 7, 2, 8, false, CounterBase.EncodingType.k2X);
+        rightModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        rightModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
+        rightModuleEncoder.start();
+        LiveWindow.addSensor("Drivetrain", "rightModuleEncoder", rightModuleEncoder);
             
-        frontLeftWheelMotor = new Victor(1);
-        LiveWindow.addActuator("Drivetrain", "frontLeftWheelMotor", (Victor) frontLeftWheelMotor);
-        frontRightWheelMotor = new Victor(2);
-        LiveWindow.addActuator("Drivetrain", "frontRightWheelMotor", (Victor) frontRightWheelMotor);
-        backLeftWheelMotor = new Victor(3);
-        LiveWindow.addActuator("Drivetrain", "backLeftWheelMotor", (Victor) backLeftWheelMotor);
-        backRightWheelMotor = new Victor(4);
-        LiveWindow.addActuator("Drivetrain", "backRightWheelMotor", (Victor) backRightWheelMotor);
+        frontWheelMotor = new Victor(1,1);
+        LiveWindow.addActuator("Drivetrain", "frontWheelMotor", (Victor) frontWheelMotor);
+        leftWheelMotor = new Victor(1,2);
+        LiveWindow.addActuator("Drivetrain", "leftWheelMotor", (Victor) leftWheelMotor);
+        backWheelMotor = new Victor(1,3);
+        LiveWindow.addActuator("Drivetrain", "backWheelMotor", (Victor) backWheelMotor);
+        rightWheelMotor = new Victor(1,4);
+        LiveWindow.addActuator("Drivetrain", "rightWheelMotor", (Victor) rightWheelMotor);
         
-        frontLeftModuleMotor = new Victor(5);
-        LiveWindow.addActuator("Drivetrain", "frontLeftModuleMotor", (Victor) frontLeftModuleMotor);
-        frontRightModuleMotor = new Victor(6);
-        LiveWindow.addActuator("Drivetrain", "frontRightModuleMotor", (Victor) frontRightModuleMotor);
-        backLeftModuleMotor = new Victor(7);
-        LiveWindow.addActuator("Drivetrain", "backLeftModuleMotor", (Victor) backLeftModuleMotor);
-        backRightModuleMotor = new Victor(8);
-        LiveWindow.addActuator("Drivetrain", "backRightModuleMotor", (Victor) backRightModuleMotor);
+        frontModuleMotor = new Victor(2,1);
+        LiveWindow.addActuator("Drivetrain", "frontModuleMotor", (Victor) frontModuleMotor);
+        leftModuleMotor = new Victor(2,2);
+        LiveWindow.addActuator("Drivetrain", "leftModuleMotor", (Victor) leftModuleMotor);
+        backModuleMotor = new Victor(2,3);
+        LiveWindow.addActuator("Drivetrain", "backModuleMotor", (Victor) backModuleMotor);
+        rightModuleMotor = new Victor(2,4);
+        LiveWindow.addActuator("Drivetrain", "rightModuleMotor", (Victor) rightModuleMotor);
         
-        angleZeroingButton = new DigitalInput(1);
+        angleZeroingButton = new DigitalInput(1,9);
         LiveWindow.addSensor("Drivetrain", "encoderZeroingSwitch", angleZeroingButton);
     }
 }

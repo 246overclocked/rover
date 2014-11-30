@@ -5,13 +5,19 @@
  */
 package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
+import Nav6.BufferingSerialPort;
+import Nav6.IMU;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.templates.RoverRobot;
+import edu.wpi.first.wpilibj.visa.VisaException;
 
 
 /**
@@ -22,23 +28,32 @@ public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
     
-    NetworkTable LiDARTable;
+    //NetworkTable LiDARTable;
     
-    public SwerveModule frontLeftModule;
-    public SwerveModule frontRightModule;
-    public SwerveModule backLeftModule;
-    public SwerveModule backRightModule;
+    public SwerveModule frontModule;
+    public SwerveModule leftModule;
+    public SwerveModule backModule;
+    public SwerveModule rightModule;
     
     public double FOV = 0; //the front of the vehicle in degrees. May be used in different ways by different control schemes.
     
+    IMU nav6;
+    
     public Drivetrain()
     {
-        frontLeftModule = new SwerveModule(RobotMap.frontLeftWheelEncoder, RobotMap.frontLeftModuleEncoder, RobotMap.frontLeftWheelMotor, RobotMap.frontLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
-        frontRightModule = new SwerveModule(RobotMap.frontRightWheelEncoder, RobotMap.frontRightModuleEncoder, RobotMap.frontRightWheelMotor, RobotMap.frontRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, RobotMap.FRONT_BACK_LENGTH/2);
-        backLeftModule = new SwerveModule(RobotMap.backLeftWheelEncoder, RobotMap.backLeftModuleEncoder, RobotMap.backLeftWheelMotor, RobotMap.backLeftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
-        backRightModule = new SwerveModule(RobotMap.backRightWheelEncoder, RobotMap.backRightModuleEncoder, RobotMap.backRightWheelMotor, RobotMap.backRightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, -RobotMap.FRONT_BACK_LENGTH/2);
+        frontModule = new SwerveModule(RobotMap.frontWheelEncoder, RobotMap.frontModuleEncoder, RobotMap.frontWheelMotor, RobotMap.frontModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, 0, RobotMap.FRONT_BACK_LENGTH/2, "frontModule");
+        leftModule = new SwerveModule(RobotMap.leftWheelEncoder, RobotMap.leftModuleEncoder, RobotMap.leftWheelMotor, RobotMap.leftModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, -RobotMap.LEFT_RIGHT_WIDTH/2, 0, "leftModule");
+        backModule = new SwerveModule(RobotMap.backWheelEncoder, RobotMap.backModuleEncoder, RobotMap.backWheelMotor, RobotMap.backModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, 0, -RobotMap.FRONT_BACK_LENGTH/2, "backModule");
+        rightModule = new SwerveModule(RobotMap.rightWheelEncoder, RobotMap.rightModuleEncoder, RobotMap.rightWheelMotor, RobotMap.rightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, 0, "rightModule");
     
-        LiDARTable = NetworkTable.getTable("LiDAR");
+        //LiDARTable = NetworkTable.getTable("LiDAR");
+        
+        try {
+            nav6 = new IMU(new BufferingSerialPort(57600));
+        } catch (VisaException ex) {
+            ex.printStackTrace();
+        }
+        LiveWindow.addSensor("Drivetrain", "Gyro", nav6);
     }
 
     public void initDefaultCommand() {
@@ -65,10 +80,10 @@ public class Drivetrain extends Subsystem {
     public Vector2D[] snake(double rate, double corXDist, double corYDist){
         Vector2D cor = new Vector2D(true, corXDist, corYDist);
         Vector2D[] moduleLocations = new Vector2D[4];
-        moduleLocations[0] = new Vector2D(true, frontLeftModule.getX(), frontLeftModule.getY());
-        moduleLocations[1] = new Vector2D(true, frontRightModule.getX(), frontRightModule.getY());
-        moduleLocations[2] = new Vector2D(true, backLeftModule.getX(), backLeftModule.getY());
-        moduleLocations[3] = new Vector2D(true, backRightModule.getX(), backRightModule.getY());
+        moduleLocations[0] = new Vector2D(true, frontModule.getX(), frontModule.getY());
+        moduleLocations[1] = new Vector2D(true, leftModule.getX(), leftModule.getY());
+        moduleLocations[2] = new Vector2D(true, backModule.getX(), backModule.getY());
+        moduleLocations[3] = new Vector2D(true, rightModule.getX(), rightModule.getY());
         
 //        makes the module locations relative to the center of rotation
         double[] moduleDists = new double[4]; //array of module distances (the magnitudes of the distance vectors)
@@ -116,15 +131,15 @@ public class Drivetrain extends Subsystem {
             }
         }
         
-        frontLeftModule.setAngle(moduleSetpoints[0].getAngle());
-        frontRightModule.setAngle(moduleSetpoints[1].getAngle());
-        backLeftModule.setAngle(moduleSetpoints[2].getAngle());
-        backRightModule.setAngle(moduleSetpoints[3].getAngle());
+        frontModule.setAngle(moduleSetpoints[0].getAngle());
+        leftModule.setAngle(moduleSetpoints[1].getAngle());
+        backModule.setAngle(moduleSetpoints[2].getAngle());
+        rightModule.setAngle(moduleSetpoints[3].getAngle());
         
-        frontLeftModule.setWheelSpeed(moduleSetpoints[0].getMagnitude());
-        frontRightModule.setWheelSpeed(moduleSetpoints[1].getMagnitude());
-        backLeftModule.setWheelSpeed(moduleSetpoints[2].getMagnitude());
-        backRightModule.setWheelSpeed(moduleSetpoints[3].getMagnitude());        
+        frontModule.setWheelSpeed(moduleSetpoints[0].getMagnitude());
+        leftModule.setWheelSpeed(moduleSetpoints[1].getMagnitude());
+        backModule.setWheelSpeed(moduleSetpoints[2].getMagnitude());
+        rightModule.setWheelSpeed(moduleSetpoints[3].getMagnitude());        
         
     }
     
@@ -137,11 +152,12 @@ public class Drivetrain extends Subsystem {
     public static final double ABSOLUTE_TWIST_PERIOD = 20;
     public AbsoluteTwistPIDOutput absoluteTwistPIDOutput = new AbsoluteTwistPIDOutput();
     
-    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, /* TODO: Set source */ null, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
+    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, nav6, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
     
     /**
      *@author Paul Terrasi
      */
+     
     public class AbsoluteTwistPIDOutput implements PIDOutput
     {
         public double speed = 0;
@@ -156,13 +172,14 @@ public class Drivetrain extends Subsystem {
     public void driveAbsoluteTwist(double speed, double direction, double absoluteAngle){
         absoluteTwistPIDOutput.speed = speed;
         absoluteTwistPIDOutput.direction = direction;
-        absoluteTwistPID.setSetpoint(absoluteAngle);
+        absoluteTwistPID.setSetpoint(absoluteAngle - FOV);
     }
     
     public void enableAbsoluteTwist(boolean on) {
         if(on) absoluteTwistPID.enable();
         else absoluteTwistPID.disable();
     }
+    
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- congratulations you did it, your prize is the smiley face just to the right----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:( hahaha
     
     public void setFOV(double fov)
@@ -177,31 +194,31 @@ public class Drivetrain extends Subsystem {
     
     public double getFieldCentricHeading() //returns the direction of the robot relative to the direction the driver is facing.
     {
-        return LiDARTable.getNumber("x", -1);
+        return nav6.getYaw() - RoverRobot.startingHeading;
     }
     
     public boolean isMoving()
     {
-        return frontLeftModule.getSpeedSetpoint() != 0
-                ||frontRightModule.getSpeedSetpoint() != 0
-                ||backLeftModule.getSpeedSetpoint() != 0
-                ||backRightModule.getSpeedSetpoint() != 0;
+        return frontModule.getSpeedSetpoint() != 0
+                ||leftModule.getSpeedSetpoint() != 0
+                ||backModule.getSpeedSetpoint() != 0
+                ||rightModule.getSpeedSetpoint() != 0;
     }
     
     public void unwind()
     {
-        frontLeftModule.unwind();
-        frontRightModule.unwind();
-        backLeftModule.unwind();
-        backRightModule.unwind();
+        frontModule.unwind();
+        leftModule.unwind();
+        backModule.unwind();
+        rightModule.unwind();
     }
     
     public void zeroAngles()
     {
-        frontLeftModule.resetModuleEncoder();
-        frontRightModule.resetModuleEncoder();
-        backLeftModule.resetModuleEncoder();
-        backRightModule.resetModuleEncoder();
+        frontModule.resetModuleEncoder();
+        leftModule.resetModuleEncoder();
+        backModule.resetModuleEncoder();
+        rightModule.resetModuleEncoder();
     }
             
 }

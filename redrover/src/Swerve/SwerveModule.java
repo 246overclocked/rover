@@ -9,6 +9,7 @@ package Swerve;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 
 /**
@@ -30,8 +31,8 @@ public class SwerveModule
 
     public SpeedController moduleMotor;
     
-    PIDController speedPID;
-    PIDController anglePID;
+    public PIDController speedPID;
+    public PIDController anglePID;
     
     public static final double SPEED_Kp = 0.5;
     public static final double SPEED_Ki = 0;
@@ -44,12 +45,12 @@ public class SwerveModule
     public static final double ANGLE_Ki = 0;
     public static final double ANGLE_Kd = 0;
     public static final double ANGLE_Kf = 0;
-    public static final double ANGLE_PERIOD = 10;
+    public static final double ANGLE_PERIOD = .1;
     public static final double ANGLE_TOLERANCE = 0.5;
     
     public boolean invertSpeed = false;
     
-    public SwerveModule(Encoder wheelEncoder, Encoder moduleEncoder, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y)
+    public SwerveModule(Encoder wheelEncoder, Encoder moduleEncoder, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y, String name)
     {
         this.x = x;
         this.y = y;
@@ -72,6 +73,9 @@ public class SwerveModule
         
         speedPID.setOutputRange(-1, 1);
         anglePID.setOutputRange(-1, 1);
+        
+        LiveWindow.addSensor("SwerveModule", name + "speedPID", speedPID);
+        LiveWindow.addSensor("SwerveModule", name + "anglePID", anglePID);
     }
     
 //    coordinates
@@ -90,6 +94,8 @@ public class SwerveModule
     // set angle
     
     public void setAngle(double angle){
+        
+        if(!anglePID.isEnable())anglePID.enable();
         
         angle = angle % 360;
         
@@ -151,12 +157,14 @@ public class SwerveModule
     
     // set wheel speed
     public void setWheelSpeed(double speed){
+        if(!speedPID.isEnable())speedPID.enable();
         if(invertSpeed) speed = -speed;
         speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
     }
     
     public void unwind()
     {
+        if(!anglePID.isEnable())anglePID.enable();
         anglePID.setSetpoint(0);
     }
     
