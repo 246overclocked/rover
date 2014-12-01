@@ -77,43 +77,43 @@ public class RobotMap {
     public static void init() {
                 
         frontWheelEncoder = new Encoder(1, 1, 1, 2, false, CounterBase.EncodingType.k2X);
-        frontWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        frontWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK);
         frontWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
         frontWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontWheelEncoder", frontWheelEncoder);
         leftWheelEncoder = new Encoder(1, 3, 1, 4, false, CounterBase.EncodingType.k2X);
-        leftWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        leftWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); 
         leftWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
         leftWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "leftWheelEncoder", leftWheelEncoder);
         backWheelEncoder = new Encoder(1, 5, 1, 6, false, CounterBase.EncodingType.k2X);
-        backWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        backWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); 
         backWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
         backWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "backWheelEncoder", backWheelEncoder); 
         rightWheelEncoder = new Encoder(1, 7, 1, 8, false, CounterBase.EncodingType.k2X);
-        rightWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        rightWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK); 
         rightWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
         rightWheelEncoder.start();
         LiveWindow.addSensor("Drivetrain", "rightWheelEncoder", rightWheelEncoder); 
         
         frontModuleEncoder = new Encoder(2, 1, 2, 2, false, CounterBase.EncodingType.k2X);
-        frontModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        frontModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         frontModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         frontModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontModuleEncoder", frontModuleEncoder);
         leftModuleEncoder = new Encoder(2, 3, 2, 4, false, CounterBase.EncodingType.k2X);
-        leftModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        leftModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         leftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         leftModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "leftModuleEncoder", leftModuleEncoder);
         backModuleEncoder = new Encoder(2, 5, 2, 6, false, CounterBase.EncodingType.k2X);
-        backModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        backModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         backModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         backModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "backModuleEncoder", backModuleEncoder);
         rightModuleEncoder = new Encoder(2, 7, 2, 8, false, CounterBase.EncodingType.k2X);
-        rightModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); //TODO: set the distance travelled per pulse -- ned to test
+        rightModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         rightModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         rightModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "rightModuleEncoder", rightModuleEncoder);

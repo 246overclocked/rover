@@ -54,6 +54,8 @@ public class Drivetrain extends Subsystem {
             ex.printStackTrace();
         }
         LiveWindow.addSensor("Drivetrain", "Gyro", nav6);
+        
+        absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, nav6, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
     }
 
     public void initDefaultCommand() {
@@ -152,7 +154,7 @@ public class Drivetrain extends Subsystem {
     public static final double ABSOLUTE_TWIST_PERIOD = 20;
     public AbsoluteTwistPIDOutput absoluteTwistPIDOutput = new AbsoluteTwistPIDOutput();
     
-    PIDController absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, nav6, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
+    PIDController absoluteTwistPID;
     
     /**
      *@author Paul Terrasi

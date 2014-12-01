@@ -30,7 +30,8 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public static double startingHeading = 0;
     
-    boolean test1 = true;
+    public static boolean test1 = true;
+    public static boolean gasMode = true;
     
     //NetworkTable diagnosticsTable;
 
@@ -55,9 +56,11 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             SmartDashboard.putBoolean("speedOn", true);
             SmartDashboard.putBoolean("angleOn", true);
             SmartDashboard.putBoolean("unwind", false);
-            
             SmartDashboard.putNumber("speed", 0);
             SmartDashboard.putNumber("angle", 0);
+            SmartDashboard.putNumber("K_DELTA", RobotMap.K_MODULE_ANGLE_DELTA);
+            SmartDashboard.putNumber("K_TWIST", RobotMap.K_MODULE_ANGLE_TWIST);
+            SmartDashboard.putNumber("K_REVERSE", RobotMap.K_MODULE_ANGLE_REVERSE);
         }
     }   
     
@@ -94,7 +97,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     public void teleopPeriodic() {
         if(test1)
         {
-            SwerveModule mod = CommandBase.drivetrain.leftModule;
+            SwerveModule mod = CommandBase.drivetrain.rightModule;
             
             if(SmartDashboard.getBoolean("unwind", false))
             {
