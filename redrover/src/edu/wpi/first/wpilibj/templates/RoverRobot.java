@@ -10,6 +10,7 @@ package edu.wpi.first.wpilibj.templates;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -40,7 +41,16 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * used for any initialization code.
      */
     public void robotInit() {
-        RobotMap.init();
+        try 
+        {
+            RobotMap.init();
+        }
+        catch(CANTimeoutException e)
+        {
+            e.printStackTrace();
+        }
+                
+        
         // instantiate the command used for the autonomous period
         autonomousCommand = null;
 

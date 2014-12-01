@@ -5,7 +5,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
@@ -58,10 +60,10 @@ public class RobotMap {
     public static SpeedController rightWheelMotor;
     
 //    by "module" we mean angle control of the wheel
-    public static SpeedController frontModuleMotor;
-    public static SpeedController leftModuleMotor;
-    public static SpeedController backModuleMotor;
-    public static SpeedController rightModuleMotor;
+    public static CANJaguar frontModuleMotor;
+    public static CANJaguar leftModuleMotor;
+    public static CANJaguar backModuleMotor;
+    public static CANJaguar rightModuleMotor;
     
     public static DigitalInput angleZeroingButton;
     // For example to map the left and right motors, you could define the
@@ -74,7 +76,7 @@ public class RobotMap {
     // public static final int rangefinderPort = 1;
     // public static final int rangefinderModule = 1;
     
-    public static void init() {
+    public static void init() throws CANTimeoutException{
                 
         frontWheelEncoder = new Encoder(1, 1, 1, 2, false, CounterBase.EncodingType.k2X);
         frontWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK);
@@ -127,14 +129,14 @@ public class RobotMap {
         rightWheelMotor = new Victor(1,4);
         LiveWindow.addActuator("Drivetrain", "rightWheelMotor", (Victor) rightWheelMotor);
         
-        frontModuleMotor = new Victor(2,1);
-        LiveWindow.addActuator("Drivetrain", "frontModuleMotor", (Victor) frontModuleMotor);
-        leftModuleMotor = new Victor(2,2);
-        LiveWindow.addActuator("Drivetrain", "leftModuleMotor", (Victor) leftModuleMotor);
-        backModuleMotor = new Victor(2,3);
-        LiveWindow.addActuator("Drivetrain", "backModuleMotor", (Victor) backModuleMotor);
-        rightModuleMotor = new Victor(2,4);
-        LiveWindow.addActuator("Drivetrain", "rightModuleMotor", (Victor) rightModuleMotor);
+        frontModuleMotor = new CANJaguar(0, CANJaguar.ControlMode.kPosition);
+        LiveWindow.addActuator("Drivetrain", "frontModuleMotor", frontModuleMotor);
+        leftModuleMotor = new CANJaguar(0, CANJaguar.ControlMode.kPosition);
+        LiveWindow.addActuator("Drivetrain", "leftModuleMotor", leftModuleMotor);
+        backModuleMotor = new CANJaguar(0, CANJaguar.ControlMode.kPosition);
+        LiveWindow.addActuator("Drivetrain", "backModuleMotor", backModuleMotor);
+        rightModuleMotor = new CANJaguar(0, CANJaguar.ControlMode.kPosition);
+        LiveWindow.addActuator("Drivetrain", "rightModuleMotor", rightModuleMotor);
         
         angleZeroingButton = new DigitalInput(1,9);
         LiveWindow.addSensor("Drivetrain", "encoderZeroingSwitch", angleZeroingButton);
