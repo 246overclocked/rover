@@ -9,6 +9,7 @@ package Swerve;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.RobotMap;
@@ -43,9 +44,9 @@ public class SwerveModule
     public static final double SPEED_PERIOD = .1;
     public static final double SPEED_TOLERANCE = 0.25;
     
-    public static final double ANGLE_Kp = 0.1;
-    public static final double ANGLE_Ki = 0;
-    public static final double ANGLE_Kd = 0;
+    public static final double ANGLE_Kp = 0.015; //was .02
+    public static final double ANGLE_Ki = 0.0012; //was .008
+    public static final double ANGLE_Kd = 0.003; //was 0
     public static final double ANGLE_Kf = 0;
     public static final double ANGLE_PERIOD = .1;
     public static final double ANGLE_TOLERANCE = 0.5;
@@ -71,7 +72,6 @@ public class SwerveModule
         anglePID.setAbsoluteTolerance(ANGLE_TOLERANCE);
         
         anglePID.setContinuous();
-        anglePID.setInputRange(0, 360);
         
         speedPID.setOutputRange(-1, 1);
         anglePID.setOutputRange(-1, 1);
@@ -184,7 +184,10 @@ public class SwerveModule
         }
         else
         {
-            moduleMotor.set(speed);
+            System.out.println(speed);
+            wheelMotor.set(speed);
+            System.out.println(wheelMotor.get());
+            System.out.println(((Victor) wheelMotor).getDescription());
         }
     }
     
@@ -240,6 +243,6 @@ public class SwerveModule
     }
     
     public void resetModuleEncoder(){
-        wheelEncoder.reset();
+        moduleEncoder.reset();
     }
 }

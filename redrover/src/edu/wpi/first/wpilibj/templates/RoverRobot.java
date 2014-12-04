@@ -30,7 +30,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public static double startingHeading = 0;
     
-    public static boolean test1 = true;
+    public static boolean test1 = false;
     public static boolean gasMode = true;
     
     //NetworkTable diagnosticsTable;
@@ -65,6 +65,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     }   
     
     public void disabledPeriodic() {
+        allPeriodic();
         if(RobotMap.angleZeroingButton.get())
         {
             CommandBase.drivetrain.zeroAngles();
@@ -80,6 +81,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+        allPeriodic();
         Scheduler.getInstance().run();
     }
 
@@ -88,16 +90,19 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        autonomousCommand.cancel();
+        //autonomousCommand.cancel();
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+        allPeriodic();
+        System.out.println("In teleop");
         if(test1)
         {
-            SwerveModule mod = CommandBase.drivetrain.rightModule;
+            System.out.println("In test1");
+            SwerveModule mod = CommandBase.drivetrain.frontModule;
             
             if(SmartDashboard.getBoolean("unwind", false))
             {
@@ -105,8 +110,10 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             }
             else
             {
+                System.out.println("not unwinding");
                 if(SmartDashboard.getBoolean("speedOn", false))
                 {
+                    System.out.println("Commanding setWheelSpeed: " + SmartDashboard.getNumber("speedSetpoint", 0));
                     mod.setWheelSpeed(SmartDashboard.getNumber("speedSetpoint", 0));
                 }
                 else
@@ -137,8 +144,18 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
+        allPeriodic();
         System.out.println(CommandBase.drivetrain.leftModule.anglePID.getError());
         LiveWindow.run();
+    }
+    
+    public void allPeriodic()
+    {
+        if(CommandBase.drivetrain.isOverRotated())
+        {
+            System.out.println("Killing the dog");
+            getWatchdog().kill();
+        }
     }
     
     public void run()

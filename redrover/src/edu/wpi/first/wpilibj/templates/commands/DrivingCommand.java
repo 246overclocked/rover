@@ -29,6 +29,7 @@ public abstract class DrivingCommand extends CommandBase {
         COR.setAngle(COR.getAngle() + drivetrain.getFOV());
         
         drivetrain.drive(crabVector.getMagnitude(), crabVector.getAngle(), getSpinRate(), COR.getX(), COR.getY());
+        System.out.println("crabVector angle: " + crabVector.getAngle());
         
         postExecute();
     }

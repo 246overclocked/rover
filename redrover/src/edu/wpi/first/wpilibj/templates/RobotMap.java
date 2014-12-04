@@ -3,6 +3,7 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Victor;
@@ -127,14 +128,14 @@ public class RobotMap {
         rightWheelMotor = new Victor(1,4);
         LiveWindow.addActuator("Drivetrain", "rightWheelMotor", (Victor) rightWheelMotor);
         
-        frontModuleMotor = new Victor(2,1);
-        LiveWindow.addActuator("Drivetrain", "frontModuleMotor", (Victor) frontModuleMotor);
-        leftModuleMotor = new Victor(2,2);
-        LiveWindow.addActuator("Drivetrain", "leftModuleMotor", (Victor) leftModuleMotor);
-        backModuleMotor = new Victor(2,3);
-        LiveWindow.addActuator("Drivetrain", "backModuleMotor", (Victor) backModuleMotor);
-        rightModuleMotor = new Victor(2,4);
-        LiveWindow.addActuator("Drivetrain", "rightModuleMotor", (Victor) rightModuleMotor);
+        frontModuleMotor = new Jaguar(2,1);
+        LiveWindow.addActuator("Drivetrain", "frontModuleMotor", (Jaguar) frontModuleMotor);
+        leftModuleMotor = new Jaguar(2,2);
+        LiveWindow.addActuator("Drivetrain", "leftModuleMotor", (Jaguar) leftModuleMotor);
+        backModuleMotor = new Jaguar(2,3);
+        LiveWindow.addActuator("Drivetrain", "backModuleMotor", (Jaguar) backModuleMotor);
+        rightModuleMotor = new Jaguar(2,4);
+        LiveWindow.addActuator("Drivetrain", "rightModuleMotor", (Jaguar) rightModuleMotor);
         
         angleZeroingButton = new DigitalInput(1,9);
         LiveWindow.addSensor("Drivetrain", "encoderZeroingSwitch", angleZeroingButton);

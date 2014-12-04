@@ -12,6 +12,6 @@ public abstract class FieldCentricDrivingCommand extends DrivingCommand{
     
     public double updateHeading()
     {
-        return -drivetrain.getFieldCentricHeading();
+        return 0; //TODO: CHANGE THIS BACK TO -drvetrain.getFieldCentricHeading()
     }
 }

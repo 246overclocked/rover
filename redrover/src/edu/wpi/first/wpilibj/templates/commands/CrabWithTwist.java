@@ -17,6 +17,7 @@ public class CrabWithTwist extends FieldCentricDrivingCommand{
 //    driverRightJoystick is controlling "crab"
     
     protected Vector2D getCrabVector() {
+        System.out.println("Joystick X: " + oi.driverRightJoystick.getX());
         return new Vector2D(true, oi.driverRightJoystick.getX(), oi.driverRightJoystick.getY());
     }
 

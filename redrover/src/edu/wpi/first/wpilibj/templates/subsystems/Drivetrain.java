@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.templates.RoverRobot;
+import edu.wpi.first.wpilibj.templates.commands.CrabWithTwist;
 import edu.wpi.first.wpilibj.visa.VisaException;
 
 
@@ -59,8 +60,7 @@ public class Drivetrain extends Subsystem {
     }
 
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new CrabWithTwist());
         
     }
     
@@ -117,6 +117,7 @@ public class Drivetrain extends Subsystem {
         Vector2D[] moduleSetpoints = new Vector2D[4];
         Vector2D[] crab = crab(direction, speed);
         Vector2D[] snake = snake(spinRate, corX, corY);
+        System.out.println("drive() angle pre scaling" + crab[0].getAngle());
         
         double largestVector = 0;
         for(int i=0; i<moduleSetpoints.length; i++){
@@ -133,10 +134,15 @@ public class Drivetrain extends Subsystem {
             }
         }
         
+        System.out.println("Drive angle post scaling" + crab[0].getAngle());
+        
         frontModule.setAngle(moduleSetpoints[0].getAngle());
         leftModule.setAngle(moduleSetpoints[1].getAngle());
         backModule.setAngle(moduleSetpoints[2].getAngle());
         rightModule.setAngle(moduleSetpoints[3].getAngle());
+        
+        System.out.println("Swerve moudle setpoint: " + frontModule.getAngleSetpoint());
+        System.out.println("Swerve module angle: " + frontModule.getModuleAngle());
         
         frontModule.setWheelSpeed(moduleSetpoints[0].getMagnitude());
         leftModule.setWheelSpeed(moduleSetpoints[1].getMagnitude());
@@ -222,5 +228,13 @@ public class Drivetrain extends Subsystem {
         backModule.resetModuleEncoder();
         rightModule.resetModuleEncoder();
     }
-            
+     
+    public boolean isOverRotated()
+    {
+        System.out.println("frontModuleAngle: " + frontModule.getModuleAngle());
+        return Math.abs(frontModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(leftModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(backModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(rightModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE;
+    }
 }
