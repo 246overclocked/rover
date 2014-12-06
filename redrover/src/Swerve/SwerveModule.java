@@ -53,6 +53,8 @@ public class SwerveModule
     
     public boolean invertSpeed = false;
     
+    public boolean unwinding = false;
+    
     public SwerveModule(Encoder wheelEncoder, Encoder moduleEncoder, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y, String name)
     {
         this.x = x;
@@ -96,11 +98,11 @@ public class SwerveModule
     // set angle
     
     public void setAngle(double angle){
-        
+
         final double K_DELTA;
         final double K_TWIST;
         final double K_REVERSE;
-        
+
         if(RoverRobot.test1)
         {
             K_DELTA = SmartDashboard.getNumber("K_DELTA", RobotMap.K_MODULE_ANGLE_DELTA);
@@ -113,39 +115,37 @@ public class SwerveModule
             K_TWIST = RobotMap.K_MODULE_ANGLE_TWIST;
             K_REVERSE = RobotMap.K_MODULE_ANGLE_REVERSE;
         }
-        
+
         anglePID.enable();
-        
+
         angle = angle % 360;
-        
+
         double setPointForward = angle; // angle setpoint if we want the wheel to move forward
         double setPointBackward = angle + 180; // ditto for backwards
-        
-        while(Math.abs(setPointForward - moduleEncoder.getDistance()) > 180 
-                && setPointForward < RobotMap.MAX_MODULE_ANGLE 
-                && setPointForward > -RobotMap.MAX_MODULE_ANGLE) // while setPointForward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
+
+        while(Math.abs(setPointForward - moduleEncoder.getDistance()) > 180
+                && Math.abs(setPointForward) < RobotMap.MAX_MODULE_ANGLE - 180) // while setPointForward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
         {
             if(setPointForward - moduleEncoder.getDistance() < 0) setPointForward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
             else setPointForward -= 360; //else subtract 360
         }
-        
-        while(Math.abs(setPointBackward - moduleEncoder.getDistance()) > 180 
-                && setPointBackward < RobotMap.MAX_MODULE_ANGLE 
-                && setPointBackward > -RobotMap.MAX_MODULE_ANGLE) // while setPointBackward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
+
+        while(Math.abs(setPointBackward - moduleEncoder.getDistance()) > 180
+                && Math.abs(setPointBackward) < RobotMap.MAX_MODULE_ANGLE - 180) // while setPointBackward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
         {
             if(setPointBackward - moduleEncoder.getDistance() < 0) setPointBackward += 360; //if we need to add 360 to get closer to moduleEncoder, do so
             else setPointBackward -= 360; //else subtract 360
         }
-        
+
         //rate the 2 options based on distance from the current angle, if we will be untwisting the wire, and how fast the wheel is going for setPointBackward to reverse it
-        
+
         double forwardsRating = 0;
         double backwardsRating = 0;
-        
+
         //Rating for the distance between where the module is currently pointing and each of the setpoints
         forwardsRating -= K_DELTA*Math.abs(setPointForward - moduleEncoder.getDistance());
         backwardsRating -= K_DELTA*Math.abs(setPointBackward - moduleEncoder.getDistance());
-        
+
         //Rating boost if this setpoint is closer to the 0 (where the wire is completely untwisted) that the current module angle
         if(setPointForward > 0){
             forwardsRating += (moduleEncoder.getDistance() - setPointForward)*K_TWIST; // positive => we are unwinding (moving closer to zero)
@@ -158,11 +158,11 @@ public class SwerveModule
         } else {
             backwardsRating += (setPointBackward - moduleEncoder.getDistance())*K_TWIST; // negative => we are winding up (moving farther from zero)
         }
-        
+
         //Rating for if the how much the velocity will need to change in order the make the wheel go further. Forwards rating gets a positive boost if wheel is already moving forwards, if the wheel is currently moving backwards it gets a deduction.
         forwardsRating += K_REVERSE * wheelEncoder.getRate();
-        
-        if(forwardsRating > backwardsRating) 
+
+        if(forwardsRating > backwardsRating)
         {
             anglePID.setSetpoint(setPointForward);
             invertSpeed = false;
@@ -176,23 +176,21 @@ public class SwerveModule
     
     // set wheel speed
     public void setWheelSpeed(double speed){
+        if(invertSpeed) speed = -speed;
         if(!RoverRobot.gasMode)
         {
             speedPID.enable();
-            if(invertSpeed) speed = -speed;
             speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
         }
         else
         {
-            System.out.println(speed);
             wheelMotor.set(speed);
-            System.out.println(wheelMotor.get());
-            System.out.println(((Victor) wheelMotor).getDescription());
         }
     }
     
     public void unwind()
     {
+        System.out.println("Unwinding in SwerveModule");
         if(!anglePID.isEnable())anglePID.enable();
         anglePID.setSetpoint(0);
     }

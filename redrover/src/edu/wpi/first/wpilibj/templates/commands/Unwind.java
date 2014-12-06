@@ -12,6 +12,7 @@ package edu.wpi.first.wpilibj.templates.commands;
 public class Unwind extends CommandBase {
     
     public Unwind() {
+        requires(drivetrain);
     }
 
     // Called just before this Command runs the first time
@@ -20,15 +21,12 @@ public class Unwind extends CommandBase {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        if(!isFinished())
-        {
             drivetrain.unwind();
-        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return drivetrain.isMoving();
+        return true;
     }
 
     // Called once after isFinished returns true

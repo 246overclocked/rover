@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -49,11 +50,22 @@ public class Drivetrain extends Subsystem {
     
         //LiDARTable = NetworkTable.getTable("LiDAR");
         
-        try {
-            nav6 = new IMU(new BufferingSerialPort(57600));
-        } catch (VisaException ex) {
-            ex.printStackTrace();
+        int count = 0;
+        int maxTries = 5;
+        while(true) {
+            try {
+                nav6 = new IMU(new BufferingSerialPort(57600));
+                if(nav6 != null) break;
+            } catch (VisaException e) {
+                if (++count == maxTries)
+                {
+                    e.printStackTrace();
+                    break;
+                }
+                Timer.delay(.01);
+            }
         }
+        
         LiveWindow.addSensor("Drivetrain", "Gyro", nav6);
         
         absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, nav6, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
@@ -117,7 +129,6 @@ public class Drivetrain extends Subsystem {
         Vector2D[] moduleSetpoints = new Vector2D[4];
         Vector2D[] crab = crab(direction, speed);
         Vector2D[] snake = snake(spinRate, corX, corY);
-        System.out.println("drive() angle pre scaling" + crab[0].getAngle());
         
         double largestVector = 0;
         for(int i=0; i<moduleSetpoints.length; i++){
@@ -134,15 +145,10 @@ public class Drivetrain extends Subsystem {
             }
         }
         
-        System.out.println("Drive angle post scaling" + crab[0].getAngle());
-        
         frontModule.setAngle(moduleSetpoints[0].getAngle());
         leftModule.setAngle(moduleSetpoints[1].getAngle());
         backModule.setAngle(moduleSetpoints[2].getAngle());
         rightModule.setAngle(moduleSetpoints[3].getAngle());
-        
-        System.out.println("Swerve moudle setpoint: " + frontModule.getAngleSetpoint());
-        System.out.println("Swerve module angle: " + frontModule.getModuleAngle());
         
         frontModule.setWheelSpeed(moduleSetpoints[0].getMagnitude());
         leftModule.setWheelSpeed(moduleSetpoints[1].getMagnitude());
