@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+import Libraries.Jaguar246;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.commands.CommandBase;
+import edu.wpi.first.wpilibj.templates.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,8 +33,10 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public static double startingHeading = 0;
     
-    public static boolean test1 = true;
+    public static boolean test1 = false;
     public static boolean gasMode = true;
+    
+    public Drivetrain drivetrain;
     
     //NetworkTable diagnosticsTable;
 
@@ -41,6 +45,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * used for any initialization code.
      */
     public void robotInit() {
+<<<<<<< HEAD
         try 
         {
             RobotMap.init();
@@ -51,11 +56,16 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         }
                 
         
+=======
+        getWatchdog().setEnabled(true);
+        RobotMap.init();
+>>>>>>> master
         // instantiate the command used for the autonomous period
         autonomousCommand = null;
 
         // Initialize all subsystems
         CommandBase.init();
+        drivetrain = CommandBase.drivetrain;
         
         //(new Thread(new RoverRobot())).start();
         
@@ -72,12 +82,16 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             SmartDashboard.putNumber("K_TWIST", RobotMap.K_MODULE_ANGLE_TWIST);
             SmartDashboard.putNumber("K_REVERSE", RobotMap.K_MODULE_ANGLE_REVERSE);
         }
+        
+        SmartDashboard.putBoolean("motorKilled", false);
     }   
     
     public void disabledPeriodic() {
+        allPeriodic();
         if(RobotMap.angleZeroingButton.get())
         {
-            CommandBase.drivetrain.zeroAngles();
+            System.out.println("Zeroing encoders");
+            drivetrain.zeroAngles();
         }
     }
 
@@ -90,6 +104,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+        allPeriodic();
         Scheduler.getInstance().run();
     }
 
@@ -98,16 +113,17 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        autonomousCommand.cancel();
+        //autonomousCommand.cancel();
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+        allPeriodic();
         if(test1)
         {
-            SwerveModule mod = CommandBase.drivetrain.rightModule;
+            SwerveModule mod = drivetrain.frontModule;
             
             if(SmartDashboard.getBoolean("unwind", false))
             {
@@ -139,6 +155,14 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         }
         else
         {
+            if(drivetrain.isMoving())
+            {
+                drivetrain.stopUnwinding();
+            }
+            else
+            {
+                drivetrain.unwind();
+            }
             Scheduler.getInstance().run();
         }
     }
@@ -147,8 +171,42 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-        System.out.println(CommandBase.drivetrain.leftModule.anglePID.getError());
+        allPeriodic();
+        System.out.println(drivetrain.leftModule.anglePID.getError());
         LiveWindow.run();
+    }
+    
+    public void allPeriodic()
+    {
+        System.out.println("Front Module Angle: " + RobotMap.frontModuleEncoder.getDistance());
+        if(Math.abs(RobotMap.frontModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
+        {
+            System.out.println("Stopping front");
+            ((Jaguar246)RobotMap.frontWheelMotor).overridingSet(0);
+            SmartDashboard.putBoolean("motorKilled", true);
+        }
+        if(Math.abs(RobotMap.leftModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
+        {
+            System.out.println("Stopping left");
+            ((Jaguar246)RobotMap.leftWheelMotor).overridingSet(0);
+            SmartDashboard.putBoolean("motorKilled", true);
+        }
+        if(Math.abs(RobotMap.backModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
+        {
+            System.out.println("Stopping back");
+            ((Jaguar246)RobotMap.backWheelMotor).overridingSet(0);
+            SmartDashboard.putBoolean("motorKilled", true);
+        }
+        if(Math.abs(RobotMap.rightModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
+        {
+            System.out.println("Stopping right");
+            ((Jaguar246)RobotMap.rightWheelMotor).overridingSet(0);
+            SmartDashboard.putBoolean("motorKilled", true);
+        }
+        if(!SmartDashboard.getBoolean("motorKilled", true))
+        {
+            ((Jaguar246)(RobotMap.frontModuleMotor)).returnControl();
+        }
     }
     
     public void run()
@@ -288,14 +346,14 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             }
 
             //PID Setpoints
-            diagnosticsTable.putNumber(keys[73], CommandBase.drivetrain.frontLeftModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[74], CommandBase.drivetrain.frontLeftModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[75], CommandBase.drivetrain.frontRightModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[76], CommandBase.drivetrain.frontRightModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[77], CommandBase.drivetrain.backLeftModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[78], CommandBase.drivetrain.backLeftModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[79], CommandBase.drivetrain.backRightModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[80], CommandBase.drivetrain.backRightModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[73], drivetrain.frontLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[74], drivetrain.frontLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[75], drivetrain.frontRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[76], drivetrain.frontRightModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[77], drivetrain.backLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[78], drivetrain.backLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[79], drivetrain.backRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[80], drivetrain.backRightModule.getAngleSetpoint());
             
             //data confirmation
             diagnosticsTable.putBoolean("isLogged", false);

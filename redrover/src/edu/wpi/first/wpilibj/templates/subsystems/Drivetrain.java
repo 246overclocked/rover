@@ -12,11 +12,13 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.templates.RoverRobot;
+import edu.wpi.first.wpilibj.templates.commands.CrabWithTwist;
 import edu.wpi.first.wpilibj.visa.VisaException;
 
 
@@ -48,19 +50,29 @@ public class Drivetrain extends Subsystem {
     
         //LiDARTable = NetworkTable.getTable("LiDAR");
         
-        try {
-            nav6 = new IMU(new BufferingSerialPort(57600));
-        } catch (VisaException ex) {
-            ex.printStackTrace();
+        int count = 0;
+        int maxTries = 5;
+        while(true) {
+            try {
+                nav6 = new IMU(new BufferingSerialPort(57600));
+                if(nav6 != null) break;
+            } catch (VisaException e) {
+                if (++count == maxTries)
+                {
+                    e.printStackTrace();
+                    break;
+                }
+                Timer.delay(.01);
+            }
         }
+        
         LiveWindow.addSensor("Drivetrain", "Gyro", nav6);
         
         absoluteTwistPID = new PIDController(ABSOLUTE_TWIST_kP, ABSOLUTE_TWIST_kI, ABSOLUTE_TWIST_kD, ABSOLUTE_TWIST_kF, nav6, absoluteTwistPIDOutput, ABSOLUTE_TWIST_PERIOD);
     }
 
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new CrabWithTwist());
         
     }
     
@@ -215,6 +227,14 @@ public class Drivetrain extends Subsystem {
         rightModule.unwind();
     }
     
+    public void stopUnwinding()
+    {
+        frontModule.stopUnwinding();
+        leftModule.stopUnwinding();
+        backModule.stopUnwinding();
+        rightModule.stopUnwinding();
+    }
+    
     public void zeroAngles()
     {
         frontModule.resetModuleEncoder();
@@ -222,5 +242,13 @@ public class Drivetrain extends Subsystem {
         backModule.resetModuleEncoder();
         rightModule.resetModuleEncoder();
     }
-            
+     
+    public boolean isOverRotated()
+    {
+        System.out.println("frontModuleAngle: " + frontModule.getModuleAngle());
+        return Math.abs(frontModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(leftModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(backModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
+                || Math.abs(rightModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE;
+    }
 }
