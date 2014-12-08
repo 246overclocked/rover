@@ -2,12 +2,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import Libraries.Joystick246;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.DigitalIOButton;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.templates.commands.CommandBase;
-import edu.wpi.first.wpilibj.templates.commands.Unwind;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -27,17 +21,6 @@ public class OI {
         driverRightJoystick.setDeadband(.1);
         operatorJoystick = new Joystick246(3);
         operatorJoystick.setDeadband(.1);
-        
-        /*
-        new Button() {
-
-            public boolean get() {
-                System.out.println(CommandBase.drivetrain.isMoving());
-                return !CommandBase.drivetrain.isMoving();
-            }
-        }.whenPressed(new Unwind());
-        */
-        (new JoystickButton(driverLeftJoystick, 3)).whileActive(new Unwind());
     }
 }
 

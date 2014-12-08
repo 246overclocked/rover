@@ -227,6 +227,14 @@ public class Drivetrain extends Subsystem {
         rightModule.unwind();
     }
     
+    public void stopUnwinding()
+    {
+        frontModule.stopUnwinding();
+        leftModule.stopUnwinding();
+        backModule.stopUnwinding();
+        rightModule.stopUnwinding();
+    }
+    
     public void zeroAngles()
     {
         frontModule.resetModuleEncoder();

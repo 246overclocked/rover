@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.commands.CommandBase;
+import edu.wpi.first.wpilibj.templates.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,6 +35,8 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     public static boolean test1 = false;
     public static boolean gasMode = true;
     
+    public Drivetrain drivetrain;
+    
     //NetworkTable diagnosticsTable;
 
     /**
@@ -48,6 +51,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
 
         // Initialize all subsystems
         CommandBase.init();
+        drivetrain = CommandBase.drivetrain;
         
         //(new Thread(new RoverRobot())).start();
         
@@ -73,7 +77,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         if(RobotMap.angleZeroingButton.get())
         {
             System.out.println("Zeroing encoders");
-            CommandBase.drivetrain.zeroAngles();
+            drivetrain.zeroAngles();
         }
     }
 
@@ -105,7 +109,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         allPeriodic();
         if(test1)
         {
-            SwerveModule mod = CommandBase.drivetrain.frontModule;
+            SwerveModule mod = drivetrain.frontModule;
             
             if(SmartDashboard.getBoolean("unwind", false))
             {
@@ -137,6 +141,14 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         }
         else
         {
+            if(drivetrain.isMoving())
+            {
+                drivetrain.stopUnwinding();
+            }
+            else
+            {
+                drivetrain.unwind();
+            }
             Scheduler.getInstance().run();
         }
     }
@@ -146,7 +158,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      */
     public void testPeriodic() {
         allPeriodic();
-        System.out.println(CommandBase.drivetrain.leftModule.anglePID.getError());
+        System.out.println(drivetrain.leftModule.anglePID.getError());
         LiveWindow.run();
     }
     
@@ -320,14 +332,14 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             }
 
             //PID Setpoints
-            diagnosticsTable.putNumber(keys[73], CommandBase.drivetrain.frontLeftModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[74], CommandBase.drivetrain.frontLeftModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[75], CommandBase.drivetrain.frontRightModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[76], CommandBase.drivetrain.frontRightModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[77], CommandBase.drivetrain.backLeftModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[78], CommandBase.drivetrain.backLeftModule.getAngleSetpoint());
-            diagnosticsTable.putNumber(keys[79], CommandBase.drivetrain.backRightModule.getSpeedSetpoint());
-            diagnosticsTable.putNumber(keys[80], CommandBase.drivetrain.backRightModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[73], drivetrain.frontLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[74], drivetrain.frontLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[75], drivetrain.frontRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[76], drivetrain.frontRightModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[77], drivetrain.backLeftModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[78], drivetrain.backLeftModule.getAngleSetpoint());
+            diagnosticsTable.putNumber(keys[79], drivetrain.backRightModule.getSpeedSetpoint());
+            diagnosticsTable.putNumber(keys[80], drivetrain.backRightModule.getAngleSetpoint());
             
             //data confirmation
             diagnosticsTable.putBoolean("isLogged", false);
