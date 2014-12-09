@@ -124,7 +124,7 @@ public class Drivetrain extends Subsystem {
     
     // direction will be continuously updated -- don't worry about changing it with gyro here
     //everything in this method is robotcentric.
-    public void drive(double speed, double direction, double spinRate, double corX, double corY)
+    public void drive(double speed, double direction, double spinRate, double corX, double corY) 
     {
         Vector2D[] moduleSetpoints = new Vector2D[4];
         Vector2D[] crab = crab(direction, speed);
