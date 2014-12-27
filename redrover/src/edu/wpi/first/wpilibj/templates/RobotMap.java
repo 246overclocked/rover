@@ -22,9 +22,9 @@ public class RobotMap {
 //    Dimentions
     //in a standard unit of measure -- we must be consistent throughout
 //    distance between "left" and "right" modules
-    public static final double LEFT_RIGHT_WIDTH = 12; // 12in = 1ft
+    public static final double LEFT_RIGHT_WIDTH = 25; // 12in = 1ft
 //    distance between "front" and "back" modules
-    public static final double FRONT_BACK_LENGTH = 12;
+    public static final double FRONT_BACK_LENGTH = 25;
 //    it is assumed that the robot's center is located smack halfway between the
 //    "front" and "back" modules and the "left" and "right" modules
     public static final double WHEEL_TOP_ABSOLUTE_SPEED = 11;
@@ -34,7 +34,7 @@ public class RobotMap {
     public static final double K_MODULE_ANGLE_TWIST = 0;
     public static final double K_MODULE_ANGLE_REVERSE = 0;
     
-    public static final double MAX_MODULE_ANGLE = 2*360;
+    public static final double MAX_MODULE_ANGLE = 1*360 + 180;
     public static final double UNSAFE_MODULE_ANGLE = MAX_MODULE_ANGLE + 360;
     
     public static final double DIAGNOSTICS_LOOP_PERIOD = 0.02; //in seconds
@@ -106,7 +106,7 @@ public class RobotMap {
         frontModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         frontModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "frontModuleEncoder", frontModuleEncoder);
-        leftModuleEncoder = new Encoder(2, 3, 2, 4, false, CounterBase.EncodingType.k2X);
+        leftModuleEncoder = new Encoder(2, 7, 2, 8, false, CounterBase.EncodingType.k2X);
         leftModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         leftModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         leftModuleEncoder.start();
@@ -116,7 +116,7 @@ public class RobotMap {
         backModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         backModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "backModuleEncoder", backModuleEncoder);
-        rightModuleEncoder = new Encoder(2, 7, 2, 8, false, CounterBase.EncodingType.k2X);
+        rightModuleEncoder = new Encoder(2, 3, 2, 4, false, CounterBase.EncodingType.k2X);
         rightModuleEncoder.setDistancePerPulse(MODULE_ENCODER_DISTANCE_PER_TICK); 
         rightModuleEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kDistance); // have encoder measure rate, not distance
         rightModuleEncoder.start();

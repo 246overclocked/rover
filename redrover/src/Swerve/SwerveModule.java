@@ -36,12 +36,12 @@ public class SwerveModule
     public PIDController speedPID;
     public PIDController anglePID;
     
-    public static final double SPEED_Kp = 0.5;
+    public static final double SPEED_Kp = 0.055;
     public static final double SPEED_Ki = 0;
     public static final double SPEED_Kd = 0;
-    public static final double SPEED_Kf = 0;
+    public static final double SPEED_Kf = 0.045;
     public static final double SPEED_PERIOD = .1;
-    public static final double SPEED_TOLERANCE = 0.25;
+    public static final double SPEED_TOLERANCE = 0;
     
     public static final double ANGLE_Kp = 0.015; //was .02
     public static final double ANGLE_Ki = 0.0012; //was .008
@@ -181,6 +181,10 @@ public class SwerveModule
         if(invertSpeed) speed = -speed;
         if(!RoverRobot.gasMode)
         {
+            if(RoverRobot.test2)
+            {
+                speedPID.setPID(SmartDashboard.getNumber("speedP", SPEED_Kp), SmartDashboard.getNumber("speedI", SPEED_Ki), SmartDashboard.getNumber("speedD", SPEED_Kd), SmartDashboard.getNumber("speedF", SPEED_Kf));
+            }
             speedPID.enable();
             speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
         }
@@ -218,6 +222,14 @@ public class SwerveModule
     
     public double getSpeedSetpoint() {
         return speedPID.getSetpoint();
+    }
+    
+    public double getAngleOutput() {
+        return moduleMotor.get();
+    }
+    
+    public double getSpeedOutput() {
+        return wheelMotor.get();
     }
     
     public boolean angleOnTarget() {

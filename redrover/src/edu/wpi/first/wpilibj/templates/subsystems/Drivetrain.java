@@ -7,6 +7,7 @@ package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
 import Nav6.BufferingSerialPort;
 import Nav6.IMU;
+import Nav6.IMUAdvanced;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.RoverRobot;
 import edu.wpi.first.wpilibj.templates.commands.CrabWithTwist;
 import edu.wpi.first.wpilibj.visa.VisaException;
@@ -39,7 +41,7 @@ public class Drivetrain extends Subsystem {
     
     public double FOV = 0; //the front of the vehicle in degrees. May be used in different ways by different control schemes.
     
-    IMU nav6;
+    public IMUAdvanced nav6;
     
     public Drivetrain()
     {
@@ -54,7 +56,7 @@ public class Drivetrain extends Subsystem {
         int maxTries = 5;
         while(true) {
             try {
-                nav6 = new IMU(new BufferingSerialPort(57600));
+                nav6 = new IMUAdvanced(new BufferingSerialPort(57600));
                 if(nav6 != null) break;
             } catch (VisaException e) {
                 if (++count == maxTries)
@@ -213,10 +215,48 @@ public class Drivetrain extends Subsystem {
     
     public boolean isMoving()
     {
-        return frontModule.getSpeedSetpoint() != 0
-                ||leftModule.getSpeedSetpoint() != 0
-                ||backModule.getSpeedSetpoint() != 0
-                ||rightModule.getSpeedSetpoint() != 0;
+        if(RoverRobot.gasMode)
+        {
+            return frontModule.getSpeedOutput() != 0
+                    ||leftModule.getSpeedOutput()!= 0
+                    ||backModule.getSpeedOutput()!= 0
+                    ||rightModule.getSpeedOutput()!= 0;
+        }
+        else
+        {
+            return frontModule.getSpeedSetpoint() != 0
+                    ||leftModule.getSpeedSetpoint() != 0
+                    ||backModule.getSpeedSetpoint() != 0
+                    ||rightModule.getSpeedSetpoint() != 0;
+        }
+    }
+    
+    public void PIDOn(boolean on)
+    {
+        if(on)
+        {
+            frontModule.speedPIDOn(true);
+            leftModule.speedPIDOn(true);
+            backModule.speedPIDOn(true);
+            rightModule.speedPIDOn(true);
+            
+            frontModule.anglePIDOn(true);
+            leftModule.anglePIDOn(true);
+            backModule.anglePIDOn(true);
+            rightModule.anglePIDOn(true);
+        }
+        else
+        {
+            frontModule.speedPIDOn(false);
+            leftModule.speedPIDOn(false);
+            backModule.speedPIDOn(false);
+            rightModule.speedPIDOn(false);
+            
+            frontModule.anglePIDOn(false);
+            leftModule.anglePIDOn(false);
+            backModule.anglePIDOn(false);
+            rightModule.anglePIDOn(false);
+        }
     }
     
     public void unwind()

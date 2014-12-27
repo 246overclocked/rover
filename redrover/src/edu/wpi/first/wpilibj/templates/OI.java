@@ -2,6 +2,8 @@
 package edu.wpi.first.wpilibj.templates;
 
 import Libraries.Joystick246;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.templates.commands.SnakeDrive;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -21,6 +23,8 @@ public class OI {
         driverRightJoystick.setDeadband(.1);
         operatorJoystick = new Joystick246(3);
         operatorJoystick.setDeadband(.1);
+        
+        (new JoystickButton(driverLeftJoystick, 1)).whileHeld(new SnakeDrive());
     }
 }
 

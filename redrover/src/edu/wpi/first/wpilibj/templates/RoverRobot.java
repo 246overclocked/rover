@@ -33,7 +33,9 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     public static double startingHeading = 0;
     
     public static boolean test1 = false;
-    public static boolean gasMode = true;
+    public static boolean test2 = false;
+    public static boolean gyroDisabled = false;
+    public static boolean gasMode = false;
     
     public Drivetrain drivetrain;
     
@@ -68,9 +70,30 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             SmartDashboard.putNumber("K_TWIST", RobotMap.K_MODULE_ANGLE_TWIST);
             SmartDashboard.putNumber("K_REVERSE", RobotMap.K_MODULE_ANGLE_REVERSE);
         }
+        if(test2)
+        {
+            SmartDashboard.putNumber("speedP", SwerveModule.SPEED_Kp);
+            SmartDashboard.putNumber("speedI", SwerveModule.SPEED_Ki);
+            SmartDashboard.putNumber("speedD", SwerveModule.SPEED_Kd);
+            SmartDashboard.putNumber("speedF", SwerveModule.SPEED_Kf);
+            SmartDashboard.putNumber("frontModuleSpeed", 0);
+            SmartDashboard.putNumber("leftModuleSpeed", 0);
+            SmartDashboard.putNumber("backModuleSpeed", 0);
+            SmartDashboard.putNumber("rightModuleSpeed", 0);
+            SmartDashboard.putNumber("frontModuleSpeedSetpoint", 0);
+            SmartDashboard.putNumber("leftModuleSpeedSetpoint", 0);
+            SmartDashboard.putNumber("backModuleSpeedSetpoint", 0);
+            SmartDashboard.putNumber("rightModuleSpeedSetpoint", 0);
+            SmartDashboard.putNumber("spinRate", 0);
+        }
         
         SmartDashboard.putBoolean("motorKilled", false);
     }   
+    
+    public void disabledInit()
+    {
+        drivetrain.PIDOn(false);
+    }
     
     public void disabledPeriodic() {
         allPeriodic();
@@ -79,9 +102,11 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             System.out.println("Zeroing encoders");
             drivetrain.zeroAngles();
         }
+        if(drivetrain.nav6.isCalibrating()) System.out.println("Calibrating Nav6");
     }
 
     public void autonomousInit() {
+        drivetrain.PIDOn(true);
         // schedule the autonomous command (example)
 //        autonomousCommand.start();
     }
@@ -95,6 +120,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     }
 
     public void teleopInit() {
+        drivetrain.PIDOn(true);
 	// This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
@@ -107,6 +133,17 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      */
     public void teleopPeriodic() {
         allPeriodic();
+        if(test2)
+        {
+            SmartDashboard.putNumber("frontModuleSpeed", drivetrain.frontModule.getWheelSpeed());
+            SmartDashboard.putNumber("leftModuleSpeed", drivetrain.leftModule.getWheelSpeed());
+            SmartDashboard.putNumber("backModuleSpeed", drivetrain.backModule.getWheelSpeed());
+            SmartDashboard.putNumber("rightModuleSpeed", drivetrain.rightModule.getWheelSpeed());
+            SmartDashboard.putNumber("frontModuleSpeedSetpoint", drivetrain.frontModule.getSpeedSetpoint());
+            SmartDashboard.putNumber("leftModuleSpeedSetpoint", drivetrain.leftModule.getSpeedSetpoint());
+            SmartDashboard.putNumber("backModuleSpeedSetpoint", drivetrain.backModule.getSpeedSetpoint());
+            SmartDashboard.putNumber("rightModuleSpeedSetpoint", drivetrain.rightModule.getSpeedSetpoint());
+        }
         if(test1)
         {
             SwerveModule mod = drivetrain.frontModule;
@@ -159,12 +196,12 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     public void testPeriodic() {
         allPeriodic();
         System.out.println(drivetrain.leftModule.anglePID.getError());
+        getWatchdog().feed();
         LiveWindow.run();
     }
     
     public void allPeriodic()
     {
-        System.out.println("Front Module Angle: " + RobotMap.frontModuleEncoder.getDistance());
         if(Math.abs(RobotMap.frontModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
         {
             System.out.println("Stopping front");
@@ -193,6 +230,8 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         {
             ((Jaguar246)(RobotMap.frontModuleMotor)).returnControl();
         }
+        
+        SmartDashboard.putNumber("Heading", drivetrain.nav6.getYaw());
     }
     
     public void run()

@@ -7,6 +7,7 @@
 package Libraries;
 
 import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  *
@@ -25,11 +26,13 @@ public class Jaguar246 extends Jaguar {
         super(slot, channel);
     }
     
+    public double lastTime = Timer.getFPGATimestamp();
     public void set(double speed)
     {
+        System.out.println("Module PID " + getChannel() + " loop time:" + (Timer.getFPGATimestamp() - lastTime));
+        lastTime = Timer.getFPGATimestamp();
         if(!overridden) 
         {
-            System.out.println("Motor " + getChannel() + ": "+ speed);
             super.set(speed);
         }
     }
