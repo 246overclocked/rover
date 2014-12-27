@@ -26,11 +26,8 @@ public class Victor246 extends Victor {
         super(slot, channel);
     }
     
-    public double lastTime;
     public void set(double speed)
     {
-        System.out.println("Wheel PID " + getChannel() + " loop time:" + (Timer.getFPGATimestamp() - lastTime));
-        lastTime = Timer.getFPGATimestamp();
         if(!overridden) super.set(speed);
     }
     

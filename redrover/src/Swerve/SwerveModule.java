@@ -20,22 +20,23 @@ import edu.wpi.first.wpilibj.templates.RoverRobot;
  */
 public class SwerveModule 
 {
-    double x;
-    double y;
+    double x; //the horizontal distance between this wheel and the center of the robot
+    double y; //the vertical distance between this wheel and the center of the robot
     
-    double topAbsoluteWheelSpeed;
+    double topAbsoluteWheelSpeed; //the highest speed that the wheel can move
     
-    public Encoder wheelEncoder;
+    public Encoder wheelEncoder; //the encoder measuring wheel speed
 
-    public Encoder moduleEncoder;
+    public Encoder moduleEncoder; //the encoder measure module angle
 
-    public SpeedController wheelMotor;
+    public SpeedController wheelMotor; //the motor controlling wheel speed
 
-    public SpeedController moduleMotor;
+    public SpeedController moduleMotor; //the motor controlling module angle
     
-    public PIDController speedPID;
-    public PIDController anglePID;
+    public PIDController speedPID; //the PID controller for wheel speed
+    public PIDController anglePID; //the PID controller for module angle
     
+    //PID constants for the wheel speed
     public static final double SPEED_Kp = 0.055;
     public static final double SPEED_Ki = 0;
     public static final double SPEED_Kd = 0;
@@ -43,19 +44,22 @@ public class SwerveModule
     public static final double SPEED_PERIOD = .1;
     public static final double SPEED_TOLERANCE = 0;
     
-    public static final double ANGLE_Kp = 0.015; //was .02
-    public static final double ANGLE_Ki = 0.0012; //was .008
-    public static final double ANGLE_Kd = 0.003; //was 0
+    //PID constants for the module angle
+    public static final double ANGLE_Kp = 0.015;
+    public static final double ANGLE_Ki = 0.0012;
+    public static final double ANGLE_Kd = 0.003;
     public static final double ANGLE_Kf = 0;
     public static final double ANGLE_PERIOD = .1;
     public static final double ANGLE_TOLERANCE = 0.5;
     
-    public boolean invertSpeed = false;
+    public boolean invertSpeed = false; // true when the wheel is pointing backwards
     
-    public boolean unwinding = false;
+    public boolean unwinding = false; //if true, then the wheels will return to pointing forwards with the wires completely untwisted
     
     public SwerveModule(Encoder wheelEncoder, Encoder moduleEncoder, SpeedController wheelMotor, SpeedController moduleMotor, double topAbsoluteWheelSpeed, double x, double y, String name)
     {
+        // set globals
+        
         this.x = x;
         this.y = y;
         
@@ -65,6 +69,8 @@ public class SwerveModule
         this.moduleEncoder = moduleEncoder;
         this.wheelMotor = wheelMotor;
         this.moduleMotor = moduleMotor;
+        
+        //initialize PID controllers
         
         speedPID = new PIDController(SPEED_Kp, SPEED_Ki, SPEED_Kd, SPEED_Kf, wheelEncoder, wheelMotor, SPEED_PERIOD);
         anglePID = new PIDController(ANGLE_Kp, ANGLE_Ki, ANGLE_Kd, ANGLE_Kf, moduleEncoder, moduleMotor, ANGLE_PERIOD);
@@ -94,36 +100,27 @@ public class SwerveModule
     
     //whenever possible, call setAngle before setSpeed
     
-    // set angle
-    
     public void setAngle(double angle){
 
         if(!unwinding)
         {
-            final double K_DELTA;
-            final double K_TWIST;
-            final double K_REVERSE;
-
-            if(RoverRobot.test1)
-            {
-                K_DELTA = SmartDashboard.getNumber("K_DELTA", RobotMap.K_MODULE_ANGLE_DELTA);
-                K_TWIST = SmartDashboard.getNumber("K_TWIST", RobotMap.K_MODULE_ANGLE_TWIST);
-                K_REVERSE = SmartDashboard.getNumber("K_REVERSE", RobotMap.K_MODULE_ANGLE_REVERSE);
-            }
-            else
-            {
-                K_DELTA = RobotMap.K_MODULE_ANGLE_DELTA;
-                K_TWIST = RobotMap.K_MODULE_ANGLE_TWIST;
-                K_REVERSE = RobotMap.K_MODULE_ANGLE_REVERSE;
-            }
-
+            //The following is uses a weighted rating system to decide which direction we rotate the module
+            
+            //constants for the weighted average
+            final double K_DELTA = RobotMap.K_MODULE_ANGLE_DELTA;
+            final double K_TWIST = RobotMap.K_MODULE_ANGLE_TWIST;
+            final double K_REVERSE = RobotMap.K_MODULE_ANGLE_REVERSE;
+            
+            //ensure that anglePID is enabled before running
             anglePID.enable();
 
+            //converts the inputed angle into its reference angle
             angle = angle % 360;
 
             double setPointForward = angle; // angle setpoint if we want the wheel to move forward
-            double setPointBackward = angle + 180; // ditto for backwards
+            double setPointBackward = angle + 180; // angle setpoint if we want the wheel to move backwards
 
+            //The following code ensures that our 2 potential setpoints are the ones closest to our current angle
             while(Math.abs(setPointForward - moduleEncoder.getDistance()) > 180
                     && Math.abs(setPointForward) < RobotMap.MAX_MODULE_ANGLE - 180) // while setPointForward is not the closest possible angle to moduleEncoder and getting closer would not bring it past MAX_MOUDLE_ROTATIONS
             {
@@ -138,8 +135,7 @@ public class SwerveModule
                 else setPointBackward -= 360; //else subtract 360
             }
 
-            //rate the 2 options based on distance from the current angle, if we will be untwisting the wire, and how fast the wheel is going for setPointBackward to reverse it
-
+            //rating for how desirable each setpoint is. Higher numbers are better
             double forwardsRating = 0;
             double backwardsRating = 0;
 
@@ -163,6 +159,7 @@ public class SwerveModule
             //Rating for if the how much the velocity will need to change in order the make the wheel go further. Forwards rating gets a positive boost if wheel is already moving forwards, if the wheel is currently moving backwards it gets a deduction.
             forwardsRating += K_REVERSE * wheelEncoder.getRate();
 
+            //Decision making time
             if(forwardsRating > backwardsRating)
             {
                 anglePID.setSetpoint(setPointForward);
@@ -176,24 +173,14 @@ public class SwerveModule
         }
     }
     
-    // set wheel speed
     public void setWheelSpeed(double speed){
         if(invertSpeed) speed = -speed;
-        if(!RoverRobot.gasMode)
-        {
-            if(RoverRobot.test2)
-            {
-                speedPID.setPID(SmartDashboard.getNumber("speedP", SPEED_Kp), SmartDashboard.getNumber("speedI", SPEED_Ki), SmartDashboard.getNumber("speedD", SPEED_Kd), SmartDashboard.getNumber("speedF", SPEED_Kf));
-            }
-            speedPID.enable();
-            speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
-        }
-        else
-        {
-            wheelMotor.set(speed);
-        }
+        speedPID.enable();
+        speedPID.setSetpoint(speed*topAbsoluteWheelSpeed);
     }
     
+    //Makes the wheels point forwards with the wires being completely untwisted. 
+    //Once this method is called, setAngle(double angle) will be disabled until stopUnwinding is called()
     public void unwind()
     {
         unwinding = true;
@@ -201,6 +188,7 @@ public class SwerveModule
         anglePID.setSetpoint(0);
     }
     
+    //Stops the wheels from trying to point forwards and restores control to setAngle(double angle)
     public void stopUnwinding()
     {
         unwinding = false;

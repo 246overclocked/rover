@@ -6,9 +6,6 @@
 package edu.wpi.first.wpilibj.templates.commands;
 
 import Libraries.Vector2D;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.templates.RobotMap;
-import edu.wpi.first.wpilibj.templates.RoverRobot;
 
 /**
  *
@@ -24,10 +21,6 @@ public class CrabWithTwist extends FieldCentricDrivingCommand{
     }
 
     protected double getSpinRate() {
-        if(RoverRobot.test2)
-        {
-            return SmartDashboard.getNumber("spinRate", 0) / RobotMap.WHEEL_TOP_ABSOLUTE_SPEED;
-        }
         return oi.driverLeftJoystick.getX();
     }
 

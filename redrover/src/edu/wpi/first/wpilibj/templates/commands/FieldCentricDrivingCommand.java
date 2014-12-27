@@ -14,14 +14,7 @@ public abstract class FieldCentricDrivingCommand extends DrivingCommand{
     
     public double updateHeading()
     {
-        if(RoverRobot.gyroDisabled)
-        {
-            return 0;
-        }
-        else
-        {
-            return drivetrain.getFieldCentricHeading();
-    
-        }
+        //updates the FOV so that it is always pointing true north (the same direction that the driver is facing)
+        return drivetrain.getFieldCentricHeading();
     }
 }
