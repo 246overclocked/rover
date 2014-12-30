@@ -26,11 +26,8 @@ public class Jaguar246 extends Jaguar {
         super(slot, channel);
     }
     
-    public double lastTime = Timer.getFPGATimestamp();
     public void set(double speed)
     {
-        System.out.println("Module PID " + getChannel() + " loop time:" + (Timer.getFPGATimestamp() - lastTime));
-        lastTime = Timer.getFPGATimestamp();
         if(!overridden) 
         {
             super.set(speed);

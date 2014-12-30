@@ -14,20 +14,16 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.templates.RoverRobot;
 import edu.wpi.first.wpilibj.templates.commands.CrabWithTwist;
 import edu.wpi.first.wpilibj.visa.VisaException;
 
 
 /**
+ * This is the heart of the swerve code. All vector calculations are done here.
  *
  * @author michaelsilver
  */
 public class Drivetrain extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-    
-    //NetworkTable LiDARTable;
     
     public SwerveModule frontModule;
     public SwerveModule leftModule;
@@ -45,8 +41,7 @@ public class Drivetrain extends Subsystem {
         backModule = new SwerveModule(RobotMap.backWheelEncoder, RobotMap.backModuleEncoder, RobotMap.backWheelMotor, RobotMap.backModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, 0, -RobotMap.FRONT_BACK_LENGTH/2, "backModule");
         rightModule = new SwerveModule(RobotMap.rightWheelEncoder, RobotMap.rightModuleEncoder, RobotMap.rightWheelMotor, RobotMap.rightModuleMotor, RobotMap.WHEEL_TOP_ABSOLUTE_SPEED, RobotMap.LEFT_RIGHT_WIDTH/2, 0, "rightModule");
     
-        //LiDARTable = NetworkTable.getTable("LiDAR");
-        
+        //We were having occasional errors with the creation of the nav6 object, so we make 5 attempts before allowing the error to go through and being forced to redeploy.
         int count = 0;
         int maxTries = 5;
         while(true) {
@@ -96,14 +91,14 @@ public class Drivetrain extends Subsystem {
         moduleLocations[2] = new Vector2D(true, backModule.getX(), backModule.getY());
         moduleLocations[3] = new Vector2D(true, rightModule.getX(), rightModule.getY());
         
-//        makes the module locations relative to the center of rotation
+//        makes the module locations vectors have an origin at the center of rotation
         double[] moduleDists = new double[4]; //array of module distances (the magnitudes of the distance vectors)
         for(int i=0; i<moduleLocations.length; i++){
             moduleLocations[i] = Vector2D.subtractVectors(moduleLocations[i], cor);
             moduleDists[i] = moduleLocations[i].getMagnitude();
         }
         
-//        find the farthest module
+//        find the farthest module from the center of rotation
         int farthestModule = 0;
         for(int i=0; i<moduleDists.length; i++){
             if(moduleDists[i] > moduleDists[farthestModule]){
@@ -111,31 +106,32 @@ public class Drivetrain extends Subsystem {
             }
         }
         
+//        rotate the moduleLocations vectors -90 degrees.
         Vector2D[] moduleSetpoints = new Vector2D[4];
         for(int i=0; i<moduleSetpoints.length; i++){
-            moduleSetpoints[i] = new Vector2D(true, -moduleLocations[i].unitVector().getY(), moduleLocations[i].unitVector().getX());
-            moduleSetpoints[i].setMagnitude(rate*moduleDists[i]/moduleDists[farthestModule]); //set all modules' rate according to their distance from COR
+            moduleSetpoints[i] = new Vector2D(true, -moduleLocations[i].getY(), moduleLocations[i].getX());
+            moduleSetpoints[i].setMagnitude(rate*moduleDists[i]/moduleDists[farthestModule]); //The furthest module should move at the same speed as the rate, and all of the other ones should scale directly porportionally to it based on the ratio of their distances to the center of rotation.
         }
         return moduleSetpoints;
     }
     
-    // direction will be continuously updated -- don't worry about changing it with gyro here
-    //everything in this method is robotcentric.
+    //The primary driving method. Adds the crab and snake vectors together, allowing the robot to drive in any direction while rotating at the same time.
     public void drive(double speed, double direction, double spinRate, double corX, double corY)
     {
         Vector2D[] moduleSetpoints = new Vector2D[4];
         Vector2D[] crab = crab(direction, speed);
         Vector2D[] snake = snake(spinRate, corX, corY);
         
+        //Add together the crab and snake vectors. Also find which wheel will be spinning the fastest.
         double largestVector = 0;
         for(int i=0; i<moduleSetpoints.length; i++){
             moduleSetpoints[i] = Vector2D.addVectors(crab[i], snake[i]);
             if(moduleSetpoints[i].getMagnitude() > largestVector) largestVector = moduleSetpoints[i].getMagnitude();
         }
         
+        //normalize the vectors so that none of them have a magnitude greater than 1
         if(largestVector > 1)
         {
-            //normalize the vectors so that none of them have a magnitude greater than 1
             for(int i = 0; i < moduleSetpoints.length; i++)
             {
                 moduleSetpoints[i].setMagnitude(moduleSetpoints[i].getMagnitude() / largestVector);
@@ -205,7 +201,7 @@ public class Drivetrain extends Subsystem {
     
     public double getFieldCentricHeading() //returns the direction of the robot relative to the direction the driver is facing.
     {
-        return nav6.getYaw() - RoverRobot.startingHeading;
+        return nav6.getYaw();
     }
     
     double lastTimeWasMoving = Long.MAX_VALUE;
@@ -276,7 +272,6 @@ public class Drivetrain extends Subsystem {
      
     public boolean isOverRotated()
     {
-        System.out.println("frontModuleAngle: " + frontModule.getModuleAngle());
         return Math.abs(frontModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
                 || Math.abs(leftModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 
                 || Math.abs(backModule.getModuleAngle()) > RobotMap.MAX_MODULE_ANGLE 

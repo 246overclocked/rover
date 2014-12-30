@@ -20,6 +20,7 @@ public abstract class FieldCentricDrivingCommand extends DrivingCommand{
         }
         else
         {
+            //updates the FOV so that it is always pointing true north (the same direction that the driver is facing)
             return drivetrain.getFieldCentricHeading();
     
         }

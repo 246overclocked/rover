@@ -14,6 +14,9 @@ import Libraries.Vector2D;
  */
 public class SnakeDrive extends FieldCentricDrivingCommand{
 
+    // left joystick controls spinRate
+    // right joystick maps directly to center of rotation
+    
     protected Vector2D getCrabVector() {
         return new Vector2D(true, 0, 0);
     }

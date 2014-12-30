@@ -8,13 +8,10 @@
 package edu.wpi.first.wpilibj.templates;
 
 import Libraries.Jaguar246;
-import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.commands.CommandBase;
 import edu.wpi.first.wpilibj.templates.subsystems.Drivetrain;
@@ -26,11 +23,9 @@ import edu.wpi.first.wpilibj.templates.subsystems.Drivetrain;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class RoverRobot extends IterativeRobot implements Runnable {
+public class RoverRobot extends IterativeRobot {
 
     Command autonomousCommand;
-    
-    public static double startingHeading = 0;
     
     public static boolean test1 = false;
     public static boolean test2 = false;
@@ -39,8 +34,6 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public Drivetrain drivetrain;
     
-    //NetworkTable diagnosticsTable;
-
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -48,10 +41,6 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     public void robotInit() {
         getWatchdog().setEnabled(true);
         RobotMap.init();
-        // instantiate the command used for the autonomous period
-        autonomousCommand = null;
-
-        // Initialize all subsystems
         CommandBase.init();
         drivetrain = CommandBase.drivetrain;
         
@@ -97,9 +86,10 @@ public class RoverRobot extends IterativeRobot implements Runnable {
     
     public void disabledPeriodic() {
         allPeriodic();
+        
+        //Zeros the module angle encoders when the driver presses the button
         if(RobotMap.angleZeroingButton.get())
         {
-            System.out.println("Zeroing encoders");
             drivetrain.zeroAngles();
         }
         if(drivetrain.nav6.isCalibrating()) System.out.println("Calibrating Nav6");
@@ -107,8 +97,6 @@ public class RoverRobot extends IterativeRobot implements Runnable {
 
     public void autonomousInit() {
         drivetrain.PIDOn(true);
-        // schedule the autonomous command (example)
-//        autonomousCommand.start();
     }
 
     /**
@@ -121,11 +109,6 @@ public class RoverRobot extends IterativeRobot implements Runnable {
 
     public void teleopInit() {
         drivetrain.PIDOn(true);
-	// This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to 
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        //autonomousCommand.cancel();
     }
 
     /**
@@ -178,6 +161,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
         }
         else
         {
+            //the drivetrain will automatically unwind each of the 4 modules when the robot is not moving
             if(drivetrain.isMoving())
             {
                 drivetrain.stopUnwinding();
@@ -195,13 +179,14 @@ public class RoverRobot extends IterativeRobot implements Runnable {
      */
     public void testPeriodic() {
         allPeriodic();
-        System.out.println(drivetrain.leftModule.anglePID.getError());
         getWatchdog().feed();
         LiveWindow.run();
     }
     
     public void allPeriodic()
     {
+        //This is a safety to prevent any of the modules from rotating too far and overtwisting the wires. 
+        //If any module angle surpasses RobotMap.UNSAFE_MODULE_ANGLE, the motor controlling it will be automatically shut off
         if(Math.abs(RobotMap.frontModuleEncoder.getDistance()) > RobotMap.UNSAFE_MODULE_ANGLE)
         {
             System.out.println("Stopping front");
@@ -226,6 +211,7 @@ public class RoverRobot extends IterativeRobot implements Runnable {
             ((Jaguar246)RobotMap.rightWheelMotor).overridingSet(0);
             SmartDashboard.putBoolean("motorKilled", true);
         }
+        //allows the operator to manually return control of all modules to their respective PIDcontrollers
         if(!SmartDashboard.getBoolean("motorKilled", true))
         {
             ((Jaguar246)(RobotMap.frontModuleMotor)).returnControl();

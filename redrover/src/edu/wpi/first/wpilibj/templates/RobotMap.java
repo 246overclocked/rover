@@ -19,25 +19,19 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class RobotMap {
     
-//    Dimentions
-    //in a standard unit of measure -- we must be consistent throughout
-//    distance between "left" and "right" modules
-    public static final double LEFT_RIGHT_WIDTH = 25; // 12in = 1ft
-//    distance between "front" and "back" modules
-    public static final double FRONT_BACK_LENGTH = 25;
-//    it is assumed that the robot's center is located smack halfway between the
-//    "front" and "back" modules and the "left" and "right" modules
-    public static final double WHEEL_TOP_ABSOLUTE_SPEED = 11;
+    //all dimensions are in inches, degrees, and seconds
+    
+    public static final double LEFT_RIGHT_WIDTH = 25; //distance between "left" and "right" modules
+    public static final double FRONT_BACK_LENGTH = 25; //distance between "front" and "back" modules
+    public static final double WHEEL_TOP_ABSOLUTE_SPEED = 11; //the highest speed that our wheels can move
     
     //the constants for optimizing which direction the swerveModules will turn
     public static final double K_MODULE_ANGLE_DELTA = 1;
     public static final double K_MODULE_ANGLE_TWIST = 0;
     public static final double K_MODULE_ANGLE_REVERSE = 0;
     
-    public static final double MAX_MODULE_ANGLE = 1*360 + 180;
-    public static final double UNSAFE_MODULE_ANGLE = MAX_MODULE_ANGLE + 360;
-    
-    public static final double DIAGNOSTICS_LOOP_PERIOD = 0.02; //in seconds
+    public static final double MAX_MODULE_ANGLE = 1*360 + 180; //the maximum angle which can be commanded to a module
+    public static final double UNSAFE_MODULE_ANGLE = MAX_MODULE_ANGLE + 360; //the angle at which a module motor should be emergency stopped
     
     public static final double WHEEL_ENCODER_DISTANCE_PER_TICK = .00628;
     public static final double MODULE_ENCODER_DISTANCE_PER_TICK = .603;
@@ -49,24 +43,26 @@ public class RobotMap {
     public static Encoder leftWheelEncoder;
     public static Encoder backWheelEncoder;
     public static Encoder rightWheelEncoder;
-        // wheel angle direction 
+        // module angle
     public static Encoder frontModuleEncoder;
     public static Encoder leftModuleEncoder;
     public static Encoder backModuleEncoder;
     public static Encoder rightModuleEncoder;
     
     // motors
+        //wheels
     public static SpeedController frontWheelMotor;
     public static SpeedController leftWheelMotor;
     public static SpeedController backWheelMotor;
     public static SpeedController rightWheelMotor;
     
-//    by "module" we mean angle control of the wheel
+        //module
     public static SpeedController frontModuleMotor;
     public static SpeedController leftModuleMotor;
     public static SpeedController backModuleMotor;
     public static SpeedController rightModuleMotor;
     
+    //The limit switch which will 0 all module angle encoders
     public static DigitalInput angleZeroingButton;
     // For example to map the left and right motors, you could define the
     // following variables to use with your drivetrain subsystem.
@@ -80,6 +76,7 @@ public class RobotMap {
     
     public static void init() {
                 
+        //initialize encoders
         frontWheelEncoder = new Encoder(1, 1, 1, 2, false, CounterBase.EncodingType.k2X);
         frontWheelEncoder.setDistancePerPulse(WHEEL_ENCODER_DISTANCE_PER_TICK);
         frontWheelEncoder.setPIDSourceParameter(PIDSource.PIDSourceParameter.kRate); // have encoder measure rate, not distance
@@ -122,6 +119,7 @@ public class RobotMap {
         rightModuleEncoder.start();
         LiveWindow.addSensor("Drivetrain", "rightModuleEncoder", rightModuleEncoder);
             
+        //initialize motors
         frontWheelMotor = new Victor246(1,1);
         LiveWindow.addActuator("Drivetrain", "frontWheelMotor", (Victor) frontWheelMotor);
         leftWheelMotor = new Victor246(1,2);
@@ -140,6 +138,7 @@ public class RobotMap {
         rightModuleMotor = new Jaguar246(2,4);
         LiveWindow.addActuator("Drivetrain", "rightModuleMotor", (Jaguar) rightModuleMotor);
         
+        //initialize limit switch
         angleZeroingButton = new DigitalInput(1,9);
         LiveWindow.addSensor("Drivetrain", "encoderZeroingSwitch", angleZeroingButton);
     }

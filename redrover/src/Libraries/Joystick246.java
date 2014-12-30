@@ -14,17 +14,27 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class Joystick246 extends Joystick{
     
-    double deadband = .1;
+    double deadband = .1; // If the magnitude of the joystick is less than this value, it will be considered at 0
 
     public Joystick246(final int port) {
         super(port);
     }
     
+    /**
+     * Set the deadband value
+     * 
+     * @param deadband If the magnitude of the joystick is less than this value, it will be considered at 0
+     */
     public void setDeadband(double deadband)
     {
         this.deadband = deadband;
     }
     
+    /**
+     * Get the deadband value
+     * 
+     * @return deadband If the magnitude of the joystick is less than this value, it will be considered at 0
+     */
     public double getDeadband()
     {
         return deadband;
