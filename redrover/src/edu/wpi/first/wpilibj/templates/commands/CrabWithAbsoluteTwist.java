@@ -20,16 +20,12 @@ public class CrabWithAbsoluteTwist extends CrabWithTwist{
     }
     
     protected void execute() {
-        preExecute();
-        
         Vector2D crabVector = getCrabVector();
         crabVector.setAngle(crabVector.getAngle() + drivetrain.getFOV());
         Vector2D COR = getCOR();
         COR.setAngle(COR.getAngle() + drivetrain.getFOV());
         
         drivetrain.driveAbsoluteTwist(crabVector.getMagnitude(), crabVector.getAngle(), oi.driverLeftJoystick.getDirectionDegrees());
-        
-        postExecute();
     }
     
     protected void end()

@@ -8,6 +8,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import Libraries.Jaguar246;
+import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
