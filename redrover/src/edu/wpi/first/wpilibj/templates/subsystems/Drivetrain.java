@@ -6,19 +6,14 @@
 package edu.wpi.first.wpilibj.templates.subsystems;
 import Libraries.Vector2D;
 import Nav6.BufferingSerialPort;
-import Nav6.IMU;
 import Nav6.IMUAdvanced;
 import Swerve.SwerveModule;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.templates.RobotMap;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.templates.RoverRobot;
 import edu.wpi.first.wpilibj.templates.commands.CrabWithTwist;
 import edu.wpi.first.wpilibj.visa.VisaException;
@@ -213,21 +208,17 @@ public class Drivetrain extends Subsystem {
         return nav6.getYaw() - RoverRobot.startingHeading;
     }
     
+    double lastTimeWasMoving = Long.MAX_VALUE;
     public boolean isMoving()
     {
-        if(RoverRobot.gasMode)
+        if(nav6.isMoving())
         {
-            return frontModule.getSpeedOutput() != 0
-                    ||leftModule.getSpeedOutput()!= 0
-                    ||backModule.getSpeedOutput()!= 0
-                    ||rightModule.getSpeedOutput()!= 0;
+            return Timer.getFPGATimestamp() - lastTimeWasMoving > .5;
         }
         else
         {
-            return frontModule.getSpeedSetpoint() != 0
-                    ||leftModule.getSpeedSetpoint() != 0
-                    ||backModule.getSpeedSetpoint() != 0
-                    ||rightModule.getSpeedSetpoint() != 0;
+            lastTimeWasMoving = Timer.getFPGATimestamp();
+            return false;
         }
     }
     
